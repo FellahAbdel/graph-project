@@ -70,37 +70,117 @@ typedef struct s_node
 } *listeg;
 
 listeg listegnouv() { return NULL; }
+
 listeg adjtete(listeg lst, void *x)
 {
-    return lst;
+    //* Création du nouveau noeud
+    listeg newNode = (listeg)malloc(sizeof(struct s_node));
+
+    //* On vérifie que le malloc a bien eu lieu.
+    if (newNode == NULL)
+    {
+        fprintf(stderr, "Erreur : allocation échouée.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->suiv = lst;
+    newNode->val = x;
+
+    return newNode;
 }
+
 listeg adjqueue(listeg lst, void *x)
 {
+    //* Création du nouveau noeud
+    listeg newNode = (listeg)malloc(sizeof(struct s_node));
+
+    //* On vérifie le malloc
+    if (newNode == NULL)
+    {
+        fprintf(stderr, "Erreur : allocation échouée.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->val = x;
+
+    //* Cas de la liste vide
+    if (lst == NULL)
+    {
+        newNode->suiv = NULL;
+        return newNode;
+    }
+
+    //* Cas où la liste a au moins un élément.
+    //* On se positionne sur la queue.
+    listeg temp = lst;
+    while (temp->suiv != NULL)
+    {
+        temp = temp->suiv;
+    }
+    //* On est sur la queue.
+    //* On place le noeud à la queue.
+    temp->suiv = newNode;
+    newNode->suiv = NULL;
+
     return lst;
 }
+
 listeg suptete(listeg lst)
 {
+    if (lst == NULL)
+    {
+        return NULL;
+    }
+
+    listeg nodeToDestroy = lst;
+    //* On recupère le noeud suivant
+    lst = lst->suiv;
+
+    //* Destruction du noeud
+    free(nodeToDestroy);
+
     return lst;
 }
 
 void *tete(listeg lst)
 {
-    return NULL;
+    return lst != NULL ? lst->val : NULL;
 }
+
 int longueur(listeg lst)
 {
-    return -1;
+    return estvide(lst) ? 0 : 1 + longueur(lst->suiv);
 }
+
 bool estvide(listeg lst)
 {
-    return false;
+    return lst == NULL;
 }
+
 void detruire(listeg lst)
 {
+    listeg temp = lst;
+    while (temp != NULL)
+    {
+        temp = suptete(temp);
+    }
 }
+
 listeg rech(listeg lst, void *x, int (*comp)(void *, void *))
 {
-    return NULL;
+    //* objectsFound : contiendra tous les noeuds trouvés.
+    listeg objectsFound = NULL;
+
+    while (!estVide(lst))
+    {
+        if (!compareObjet(x, lst->val))
+        {
+            objectsFound = adjqueue(objectsFound, lst->val);
+        }
+        lst = lst->suiv;
+    }
+
+    return objectsFound;
 }
 
 ////////////////////////////////////////
