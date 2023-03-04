@@ -47,7 +47,18 @@ bool est_lien_connaissance(rtype id)
     return id <= AMI && id <= CONNAIT;
 }
 
-char *toStringRelation(rtype id) { return ""; }
+char *toStringRelation(rtype id)
+{
+    //* id = 0 => omega : NULL
+    //* id = 1 => INCONNUE
+    char *relations[] = {NULL, "INCONNUE", "FRERE", "COUSIN", "PARENT",
+                         "ONCLE", "EPOUX", "AMI", "VIT",
+                         "CONNAIT", "CHEF",
+                         "COLLEGUE", "LOCATAIRE", "TRAVAILLE",
+                         "PROPRIETAIRE", "SITUE", "DECOUVERT"};
+
+    return relations[id];
+}
 
 ////////////////////////////////////////
 // Exercice 2: Liste de pointeurs
