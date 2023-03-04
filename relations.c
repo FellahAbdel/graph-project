@@ -32,9 +32,21 @@ typedef enum
     DECOUVERT
 } rtype;
 
-bool est_lien_parente(rtype id) { return false; }
-bool est_lien_professionel(rtype id) { return false; }
-bool est_lien_connaissance(rtype id) { return false; }
+bool est_lien_parente(rtype id)
+{
+    return id >= FRERE && id <= EPOUX;
+}
+
+bool est_lien_professionel(rtype id)
+{
+    return id >= CHEF && id <= COLLEGUE;
+}
+
+bool est_lien_connaissance(rtype id)
+{
+    return id <= AMI && id <= CONNAIT;
+}
+
 char *toStringRelation(rtype id) { return ""; }
 
 ////////////////////////////////////////
@@ -91,6 +103,7 @@ typedef enum
     ADRESSE,
     VILLE
 } etype;
+
 typedef struct s_entite
 {
     char nom[LONG_NOM_MAX]; // le nom de l�entit� p.ex � Peugeot 106 �
@@ -229,6 +242,7 @@ int main()
     adjEntite(r, tabe[7], OBJET);
     adjEntite(r, tabe[8], ADRESSE);
     adjEntite(r, tabe[9], VILLE);
+
     // ajouter les relations de l'exemple
     adjRelation(r, tabe[0], tabe[1], FRERE);
     adjRelation(r, tabe[0], tabe[2], AMI);
