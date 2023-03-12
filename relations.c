@@ -228,7 +228,7 @@ typedef struct s_relations
     listeg liste;
 } *Relations;
 
-void chechMalloc(void *objet)
+void checkMalloc(void *objet)
 {
     if (objet == NULL)
     {
@@ -242,7 +242,7 @@ Entite creerEntite(char *s, etype e)
 {
     Entite newEntity = (Entite)malloc(sizeof(struct s_entite));
 
-    chechMalloc((Entite)newEntity);
+    checkMalloc((Entite)newEntity);
 
     strncpy(newEntity->nom, s, LONG_NOM_MAX);
     newEntity->ident = e;
@@ -254,7 +254,7 @@ Sommet nouvSommet(Entite e)
 {
     Sommet newSommet = (Sommet)malloc(sizeof(struct s_sommet));
 
-    chechMalloc((Sommet)newSommet);
+    checkMalloc((Sommet)newSommet);
 
     newSommet->larcs = listegnouv();
     newSommet->x = e;
@@ -266,38 +266,66 @@ Arc nouvArc(Entite e, rtype type)
 {
     Arc newArc = (Arc)malloc(sizeof(struct s_arc));
 
-    chechMalloc((Arc)newArc);
+    checkMalloc((Arc)newArc);
 
     newArc->t = type;
     newArc->x = e;
 
     return newArc;
 }
+
 void relationInit(Relations *g)
 {
-    Relations relation = *g;
+    Relations relation = *g; // **g
     relation = (Relations)malloc(sizeof(struct s_relations));
 
     chechMalloc((Relations)relation);
 
     relation->liste = listegnouv();
 }
+
 void relationFree(Relations *g)
 {
+    Relations r = *g;
+
+    if (r == NULL)
+    {
+        return;
+    }
+
+    listeg liste = r->liste;
+
+    Sommet sommet = (Sommet)liste->val;
+    listeg larcs = sommet->larcs;
+
+    Arc firstArc = (Arc)larcs->val;
+
+    free(firstArc->x);
+    free(firstArc);
+
+    listeg arcSuiv = larcs->suiv;
 }
 
 // 3.3 les comparaisons
 int compEntite(void *e, void *string)
 {
-    return 0;
+    Entite entity = (Entite)e;
+
+    return strcmp(entity->nom, (char *)string);
 }
+
 int compSommet(void *s, void *string)
 {
-    return 0;
+    Sommet som = (Sommet)s;
+
+    return strcmp(som->x->nom, (char *)string);
 }
+
 int compArc(void *a, void *string)
 {
-    return 0;
+    Arc arc = (Arc)a;
+
+    return strcmp(arc->x->nom, (char *)string);
 }
 
 // 3.4 ajout d'entites et de relations
@@ -444,7 +472,8 @@ int main()
     return 1;
     int i, j;
     Relations r;
-    relationInit(&r);
+    Relations ptrR = &r;
+    relationInit(ptrR);
     // ajouter les entites de l'exemple
     char *tabe[] = {"KARL", "LUDOVIC", "CELINE", "CHLOE", "GILDAS", "CEDRIC", "SEVERINE",
                     "PEUGEOT 106", "1, RUE DE LA RUE", "STRASBOURG"};
