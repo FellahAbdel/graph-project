@@ -47,7 +47,7 @@ bool est_lien_connaissance(rtype id)
     return id <= AMI && id <= CONNAIT;
 }
 
-char *toStringRelation(rtype id)
+char *toString(rtype id)
 {
     //* id = 0 => omega : NULL
     //* id = 1 => INCONNUE
@@ -239,12 +239,12 @@ Entite creerEntite(char *s, etype e)
         exit(EXIT_FAILURE);
     }
 
-    //* Il faudra penser utiliser free pour effacer newEntity->nom si l'on veut effacer l'entité
-    strdup(newEntity->nom, s);
+    strncpy(newEntity->nom, s, LONG_NOM_MAX);
     newEntity->ident = e;
 
     return newEntity;
 }
+
 Sommet nouvSommet(Entite e)
 {
     return NULL;
@@ -408,7 +408,13 @@ int main()
 
     //* On a effacé la liste, du coup on a plus le droit d'y toucher
     // printf("Longueur : %d\n", longueur(maListe));
+
+    //* Test de creerEntite()
+    Entite monEntite = creerEntite("fellah", PROPRIETAIRE);
+    printf("Nom : %s\n", monEntite->nom);
+    printf("etype : %s\n", toString(monEntite->ident));
     //* On sort.
+
     return 1;
     int i, j;
     Relations r;
