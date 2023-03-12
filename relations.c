@@ -166,6 +166,11 @@ void detruire(listeg lst)
     }
 }
 
+int cmp(void *objet1, void *objet2)
+{
+    return strncmp((char *)objet1, (char *)objet2, 1);
+}
+
 listeg rech(listeg lst, void *x, int (*comp)(void *, void *))
 {
     //* objectsFound : contiendra tous les noeuds trouvés.
@@ -349,7 +354,7 @@ int main()
         printf("Liste non vide.\n");
     }
 
-    maListe = adjtete(maListe, (char *)"diallo");
+    maListe = adjtete(maListe, (void *)"diallo");
     if (estVide(maListe))
     {
         printf("Liste vide.\n");
@@ -359,10 +364,10 @@ int main()
         printf("Liste non vide.\n");
     }
 
-    maListe = adjtete(maListe, (char *)"rhaby");
+    maListe = adjtete(maListe, (void *)"rhaby");
 
     //* On ajoute en queue.
-    maListe = adjqueue(maListe, (char *)"aissata");
+    maListe = adjqueue(maListe, (void *)"aissata");
 
     //* On supprime la tête.
     maListe = suptete(maListe);
@@ -375,6 +380,12 @@ int main()
 
     //* La longueur
     printf("Longueur : %d\n", longueur(maListe));
+
+    //* Recherchons tous les noms commençant par "d";
+
+    listeg names = rech(maListe, (void *)"aissata", cmp);
+    printf("Names found :\n ");
+    affichelg(names, affiche);
 
     //* Destruction de la liste.
     detruire(maListe);
