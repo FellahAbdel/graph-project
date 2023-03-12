@@ -305,9 +305,21 @@ bool se_connaissent_peutetre(Relations g, char *x, char *y)
 
 ////////////////////////////////////////
 // Exercice 5: Affichages
+void affiche(void *objet)
+{
+    //* Dans notre cas, on affiche une chaine
+    printf("%s\n", (char *)objet);
+
+    return;
+}
 
 void affichelg(listeg l, void (*aff)(void *))
 {
+    while (!estVide(l))
+    {
+        aff(l->val);
+        l = l->suiv;
+    }
 }
 
 void afficheEntite(void *x)
@@ -346,6 +358,8 @@ int main()
     {
         printf("Liste non vide.\n");
     }
+
+    affichelg(maListe, affiche);
     //* On sort.
     return 1;
     int i, j;
