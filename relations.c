@@ -228,16 +228,21 @@ typedef struct s_relations
     listeg liste;
 } *Relations;
 
+void chechMalloc(void *objet)
+{
+    if (objet == NULL)
+    {
+        fprintf(stderr, "Erreur : allocation echouée.\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
 // 3.2 les constructeurs
 Entite creerEntite(char *s, etype e)
 {
     Entite newEntity = (Entite)malloc(sizeof(struct s_entite));
 
-    if (newEntity == NULL)
-    {
-        fprintf(stderr, "Allocation echouée.\n");
-        exit(EXIT_FAILURE);
-    }
+    chechMalloc((Entite)newEntity);
 
     strncpy(newEntity->nom, s, LONG_NOM_MAX);
     newEntity->ident = e;
@@ -247,14 +252,30 @@ Entite creerEntite(char *s, etype e)
 
 Sommet nouvSommet(Entite e)
 {
-    return NULL;
+    Sommet newSommet = (Sommet)malloc(sizeof(struct s_sommet));
+
+    chechMalloc((Sommet)newSommet);
+
+    newSommet->larcs = listegnouv();
+    newSommet->x = e;
+
+    return newSommet;
 }
+
 Arc nouvArc(Entite e, rtype type)
 {
-    return NULL;
+    Arc newArc = (Arc)malloc(sizeof(struct s_arc));
+
+    chechMalloc((Arc)newArc);
+
+    newArc->t = type;
+    newArc->x = e;
+
+    return newArc;
 }
 void relationInit(Relations *g)
 {
+    return NULL;
 }
 void relationFree(Relations *g)
 {
