@@ -359,7 +359,28 @@ int main()
         printf("Liste non vide.\n");
     }
 
+    maListe = adjtete(maListe, (char *)"rhaby");
+
+    //* On ajoute en queue.
+    maListe = adjqueue(maListe, (char *)"aissata");
+
+    //* On supprime la tête.
+    maListe = suptete(maListe);
+
     affichelg(maListe, affiche);
+
+    //* On affiche la tête
+    printf("La tête : ");
+    affiche(tete(maListe));
+
+    //* La longueur
+    printf("Longueur : %d\n", longueur(maListe));
+
+    //* Destruction de la liste.
+    detruire(maListe);
+
+    //* On a effacé la liste, du coup on a plus le droit d'y toucher
+    // printf("Longueur : %d\n", longueur(maListe));
     //* On sort.
     return 1;
     int i, j;
