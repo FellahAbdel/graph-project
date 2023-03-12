@@ -279,9 +279,68 @@ void relationInit(Relations *g)
     Relations relation = *g; // **g
     relation = (Relations)malloc(sizeof(struct s_relations));
 
-    chechMalloc((Relations)relation);
+    checkMalloc((Relations)relation);
 
     relation->liste = listegnouv();
+}
+
+void freeEntity(Entite entity)
+{
+    free(entity);
+}
+
+void freeArc(Arc arc)
+{
+    free(arc);
+}
+
+void freeLarcs(listeg larcs)
+{
+    if (estVide(larcs))
+    {
+        return;
+    }
+
+    //* On recupère le premier arc.
+    Arc firstArc = (Arc)larcs->val;
+
+    //* On supprime l'entite.
+    freeEntity(firstArc->x);
+
+    //* On supprime l'arc.
+    free(firstArc);
+
+    //* On supprime la tête de la liste des arcs.
+    larcs = suptete(larcs);
+
+    //* Et on refait le même traitement sur l'arc suivant.
+    freeLarcs(larcs);
+}
+
+void freeListeNoeuds(listeg lg)
+{
+    if (estVide(lg))
+    {
+        return;
+    }
+    //* On recupère le 1er sommet.
+    Sommet sommet = (Sommet)lg->val;
+
+    //* On recupère la liste des arcs du 1er sommet.
+    listeg larcs = sommet->larcs;
+
+    //* On efface tous ces arcs.
+    freeLarcs(larcs);
+
+    //* On efface le 1er sommet.
+    free(sommet);
+
+    //* On efface la tête de la liste des noeuds.
+    lg = suptete(lg);
+
+    //* On refait le même traitement sur la tête suivante
+    freeListeNoeuds(lg);
+    //
 }
 
 void relationFree(Relations *g)
@@ -295,15 +354,9 @@ void relationFree(Relations *g)
 
     listeg liste = r->liste;
 
-    Sommet sommet = (Sommet)liste->val;
-    listeg larcs = sommet->larcs;
+    freeListeNoeuds(liste);
 
-    Arc firstArc = (Arc)larcs->val;
-
-    free(firstArc->x);
-    free(firstArc);
-
-    listeg arcSuiv = larcs->suiv;
+    return;
 }
 
 // 3.3 les comparaisons
@@ -331,6 +384,25 @@ int compArc(void *a, void *string)
 // 3.4 ajout d'entites et de relations
 void adjEntite(Relations g, char *nom, etype t)
 {
+    if (g == NULL)
+    {
+        return;
+    }
+
+    Entite entityToAdd = creerEntite(nom, t);
+    Sommet sommetToAdd = nouvSommet(entityToAdd);
+
+    if (estVide(g->liste))
+    {
+        g->liste = adjtete(g->liste, sommetToAdd);
+    }
+    else
+    {
+        //* On parcours g->liste et on cherche à savoir s'il y a déjà une entité
+        //* du même nom
+        //* si non, on l'ajoute.
+        //* si oui, on l'ajoute pas.
+    }
 }
 // PRE CONDITION: id doit �tre coh�rent avec les types des sommets correspondants � x et y
 //                p.ex si x est de type OBJET, id ne peut pas etre une relation de parente
@@ -472,7 +544,7 @@ int main()
     return 1;
     int i, j;
     Relations r;
-    Relations ptrR = &r;
+    Relations *ptrR = &r;
     relationInit(ptrR);
     // ajouter les entites de l'exemple
     char *tabe[] = {"KARL", "LUDOVIC", "CELINE", "CHLOE", "GILDAS", "CEDRIC", "SEVERINE",
