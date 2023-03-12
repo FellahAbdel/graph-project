@@ -275,7 +275,12 @@ Arc nouvArc(Entite e, rtype type)
 }
 void relationInit(Relations *g)
 {
-    return NULL;
+    Relations relation = *g;
+    relation = (Relations)malloc(sizeof(struct s_relations));
+
+    chechMalloc((Relations)relation);
+
+    relation->liste = listegnouv();
 }
 void relationFree(Relations *g)
 {
