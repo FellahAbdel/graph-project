@@ -333,6 +333,8 @@ void freeListeNoeuds(listeg lg)
     freeLarcs(larcs);
 
     //* On efface le 1er sommet.
+    //* On efface l'entite du sommet avant.
+    freeEntity(sommet->x);
     free(sommet);
 
     //* On efface la tête de la liste des noeuds.
