@@ -147,14 +147,14 @@ void *tete(listeg lst)
     return lst != NULL ? lst->val : NULL;
 }
 
-int longueur(listeg lst)
-{
-    return estvide(lst) ? 0 : 1 + longueur(lst->suiv);
-}
-
-bool estvide(listeg lst)
+bool estVide(listeg lst)
 {
     return lst == NULL;
+}
+
+int longueur(listeg lst)
+{
+    return estVide(lst) ? 0 : 1 + longueur(lst->suiv);
 }
 
 void detruire(listeg lst)
@@ -173,9 +173,11 @@ listeg rech(listeg lst, void *x, int (*comp)(void *, void *))
 
     while (!estVide(lst))
     {
-        if (!compareObjet(x, lst->val))
+        if (!comp(x, lst->val))
         {
-            objectsFound = adjqueue(objectsFound, lst->val);
+            //* L'ordre dans lequel les éléments sont placés dans
+            //* la listeg n'a pas d'importance
+            objectsFound = adjtete(objectsFound, lst->val);
         }
         lst = lst->suiv;
     }
@@ -204,6 +206,7 @@ typedef struct s_entite
 typedef struct s_sommet
 {
     // A DEFINIR
+    struct s_sommet *suiv;
 } *Sommet;
 
 typedef struct s_arc
@@ -322,6 +325,29 @@ void affiche_degre_relations(Relations r, char *x)
 
 int main()
 {
+    //* Test des fonctions sur la liste.
+    listeg maListe = listegnouv();
+
+    if (estVide(maListe))
+    {
+        printf("Liste vide.\n");
+    }
+    else
+    {
+        printf("Liste non vide.\n");
+    }
+
+    maListe = adjtete(maListe, (char *)"diallo");
+    if (estVide(maListe))
+    {
+        printf("Liste vide.\n");
+    }
+    else
+    {
+        printf("Liste non vide.\n");
+    }
+    //* On sort.
+    return 1;
     int i, j;
     Relations r;
     relationInit(&r);
