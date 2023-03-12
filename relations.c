@@ -231,7 +231,19 @@ typedef struct s_relations
 // 3.2 les constructeurs
 Entite creerEntite(char *s, etype e)
 {
-    return NULL;
+    Entite newEntity = (Entite)malloc(sizeof(struct s_entite));
+
+    if (newEntity == NULL)
+    {
+        fprintf(stderr, "Allocation echouée.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    //* Il faudra penser utiliser free pour effacer newEntity->nom si l'on veut effacer l'entité
+    strdup(newEntity->nom, s);
+    newEntity->ident = e;
+
+    return newEntity;
 }
 Sommet nouvSommet(Entite e)
 {
