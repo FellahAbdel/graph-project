@@ -211,17 +211,21 @@ typedef struct s_entite
 typedef struct s_sommet
 {
     // A DEFINIR
-    struct s_sommet *suiv;
+    listeg larcs;
+    Entite x;
 } *Sommet;
 
 typedef struct s_arc
 {
     // A DEFINIR
+    rtype t;
+    Entite x;
 } *Arc;
 
 typedef struct s_relations
 {
     // A DEFINIR
+    listeg liste;
 } *Relations;
 
 // 3.2 les constructeurs
