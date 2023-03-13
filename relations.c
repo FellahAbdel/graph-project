@@ -168,7 +168,7 @@ void detruire(listeg lst)
 
 int cmp(void *objet1, void *objet2)
 {
-    return strncmp((char *)objet1, (char *)objet2, 1);
+    return strcmp((char *)objet1, (char *)objet2);
 }
 
 listeg rech(listeg lst, void *x, int (*comp)(void *, void *))
@@ -178,7 +178,7 @@ listeg rech(listeg lst, void *x, int (*comp)(void *, void *))
 
     while (!estVide(lst))
     {
-        if (!comp(x, lst->val))
+        if (!comp(lst->val, x))
         {
             //* L'ordre dans lequel les éléments sont placés dans
             //* la listeg n'a pas d'importance
@@ -386,7 +386,7 @@ bool searchSommet(Relations g, char *nom)
 {
     listeg currList = g->liste;
 
-    //* Tanque la liste n'est pas vide et que les deux entités sont pas les mêmes
+    //* Tanque la liste n'est pas vide et que les deux sommets sont pas les mêmes
     //* on part au suivant.
     while (currList != NULL && compSommet((Sommet)currList->val, (char *)nom) != 0)
     {
@@ -414,13 +414,18 @@ void adjEntite(Relations g, char *nom, etype t)
     }
     else
     {
+        //* le nom est unique. (Pas de doublons).
         //* On parcours g->liste et on cherche à savoir s'il y a déjà une entité
         //* du même nom
         //* si non, on l'ajoute.
         //* si oui, on l'ajoute pas.
-        if (!searchSommet(g, nom))
+        // if (!searchSommet(g, nom))
+        // {
+        //     //* On a pas trouvé l'entité, on l'ajoute.
+        //     g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
+        // }
+        if (rech(g->liste, (char *)nom, compSommet) == NULL)
         {
-            //* On a pas trouvé l'entité, on l'ajoute.
             g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
         }
         //* Sinon on fait rien.
@@ -446,6 +451,10 @@ void afficheEntites(Relations g)
 // PRE CONDITION: strcmp(nom1,nom2)!=0
 void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
 {
+    //* Les sommets sont déjà ajoutés, ici on ajoute juste les arcs (relations).
+    //* On cherche le sommet portant le nom : nom1
+    listeg somFound = rech(g->liste, (char *)nom1, compSommet);
+    printf("%p\n", somFound);
 }
 
 ////////////////////////////////////////
