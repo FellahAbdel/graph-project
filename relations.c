@@ -382,13 +382,13 @@ int compArc(void *a, void *string)
     return strcmp(arc->x->nom, (char *)string);
 }
 
-bool searchEntity(Relations g, char *nom)
+bool searchSommet(Relations g, char *nom)
 {
     listeg currList = g->liste;
 
     //* Tanque la liste n'est pas vide et que les deux entités sont pas les mêmes
     //* on part au suivant.
-    while (currList != NULL && compEntite((Entite)currList->val, (char *)nom) != 0)
+    while (currList != NULL && compSommet((Sommet)currList->val, (char *)nom) != 0)
     {
         currList = currList->suiv;
     }
@@ -418,7 +418,7 @@ void adjEntite(Relations g, char *nom, etype t)
         //* du même nom
         //* si non, on l'ajoute.
         //* si oui, on l'ajoute pas.
-        if (!searchEntity(g, nom))
+        if (!searchSommet(g, nom))
         {
             //* On a pas trouvé l'entité, on l'ajoute.
             g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
@@ -538,6 +538,7 @@ int main()
     //* On ajoute les objets.
     adjEntite(r, tabe[7], OBJET);
     adjEntite(r, tabe[8], ADRESSE);
+    adjEntite(r, tabe[9], VILLE);
     adjEntite(r, tabe[9], VILLE);
 
     afficheEntites(r);
