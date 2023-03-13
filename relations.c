@@ -406,11 +406,6 @@ bool searchEntity(Relations g, char *nom)
 // 3.4 ajout d'entites et de relations
 void adjEntite(Relations g, char *nom, etype t)
 {
-    if (g == NULL)
-    {
-        return;
-    }
-
     Entite entityToAdd = creerEntite(nom, t);
     Sommet sommetToAdd = nouvSommet(entityToAdd);
 
