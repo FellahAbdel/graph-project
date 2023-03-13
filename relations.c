@@ -383,6 +383,26 @@ int compArc(void *a, void *string)
     return strcmp(arc->x->nom, (char *)string);
 }
 
+bool searchEntity(Relations g, char *nom)
+{
+    listeg currList = g->liste;
+
+    //* Tanque la liste n'est pas vide et que les deux entités sont pas les mêmes
+    //* on part au suivant.
+    while (currList != NULL && compEntite((Entite)currList->val, (char *)nom) != 0)
+    {
+        currList = currList->suiv;
+    }
+
+    if (currList == NULL)
+    {
+        //* on a pas trouvé l'entité.
+        return false;
+    }
+
+    //* on l'a trouvé.
+    return true;
+}
 // 3.4 ajout d'entites et de relations
 void adjEntite(Relations g, char *nom, etype t)
 {
@@ -396,7 +416,7 @@ void adjEntite(Relations g, char *nom, etype t)
 
     if (estVide(g->liste))
     {
-        g->liste = adjtete(g->liste, sommetToAdd);
+        g->liste = adjtete(g->liste, (Sommet)sommetToAdd);
     }
     else
     {
@@ -404,6 +424,25 @@ void adjEntite(Relations g, char *nom, etype t)
         //* du même nom
         //* si non, on l'ajoute.
         //* si oui, on l'ajoute pas.
+        if (!searchEntity(g, nom))
+        {
+            //* On a pas trouvé l'entité, on l'ajoute.
+            g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
+        }
+        //* Sinon on fait rien.
+    }
+}
+
+void afficheEntites(Relations g)
+{
+    return;
+    listeg curr = g->liste;
+    printf("%p\n", curr);
+    return;
+    while (curr != NULL)
+    {
+        Entite entity = (Entite)curr->val;
+        printf("%s\n", entity->nom);
     }
 }
 // PRE CONDITION: id doit �tre coh�rent avec les types des sommets correspondants � x et y
@@ -486,64 +525,8 @@ void affiche_degre_relations(Relations r, char *x)
 
 int main()
 {
-    //* Test des fonctions sur la liste.
-    listeg maListe = listegnouv();
 
-    if (estVide(maListe))
-    {
-        printf("Liste vide.\n");
-    }
-    else
-    {
-        printf("Liste non vide.\n");
-    }
-
-    maListe = adjtete(maListe, (void *)"diallo");
-    if (estVide(maListe))
-    {
-        printf("Liste vide.\n");
-    }
-    else
-    {
-        printf("Liste non vide.\n");
-    }
-
-    maListe = adjtete(maListe, (void *)"rhaby");
-
-    //* On ajoute en queue.
-    maListe = adjqueue(maListe, (void *)"aissata");
-
-    //* On supprime la tête.
-    maListe = suptete(maListe);
-
-    affichelg(maListe, affiche);
-
-    //* On affiche la tête
-    printf("La tête : ");
-    affiche(tete(maListe));
-
-    //* La longueur
-    printf("Longueur : %d\n", longueur(maListe));
-
-    //* Recherchons tous les noms commençant par "d";
-
-    listeg names = rech(maListe, (void *)"aissata", cmp);
-    printf("Names found :\n ");
-    affichelg(names, affiche);
-
-    //* Destruction de la liste.
-    detruire(maListe);
-
-    //* On a effacé la liste, du coup on a plus le droit d'y toucher
-    // printf("Longueur : %d\n", longueur(maListe));
-
-    //* Test de creerEntite()
-    Entite monEntite = creerEntite("fellah", PROPRIETAIRE);
-    printf("Nom : %s\n", monEntite->nom);
-    printf("etype : %s\n", toString(monEntite->ident));
-    //* On sort.
-
-    return 1;
+    // return 1;
     int i, j;
     Relations r;
     Relations *ptrR = &r;
@@ -551,12 +534,17 @@ int main()
     // ajouter les entites de l'exemple
     char *tabe[] = {"KARL", "LUDOVIC", "CELINE", "CHLOE", "GILDAS", "CEDRIC", "SEVERINE",
                     "PEUGEOT 106", "1, RUE DE LA RUE", "STRASBOURG"};
+    //* On ajoute les personnes.
     for (i = 0; i < 7; i++)
         adjEntite(r, tabe[i], PERSONNE);
+
+    //* On ajoute les objets.
     adjEntite(r, tabe[7], OBJET);
     adjEntite(r, tabe[8], ADRESSE);
     adjEntite(r, tabe[9], VILLE);
 
+    afficheEntites(r);
+    return 0;
     // ajouter les relations de l'exemple
     adjRelation(r, tabe[0], tabe[1], FRERE);
     adjRelation(r, tabe[0], tabe[2], AMI);
