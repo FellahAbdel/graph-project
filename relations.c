@@ -276,12 +276,11 @@ Arc nouvArc(Entite e, rtype type)
 
 void relationInit(Relations *g)
 {
-    Relations relation = *g; // **g
-    relation = (Relations)malloc(sizeof(struct s_relations));
+    *g = (Relations)malloc(sizeof(struct s_relations));
 
-    checkMalloc((Relations)relation);
+    checkMalloc((Relations)*g);
 
-    relation->liste = listegnouv();
+    (*g)->liste = listegnouv();
 }
 
 void freeEntity(Entite entity)
@@ -409,23 +408,30 @@ void adjEntite(Relations g, char *nom, etype t)
     Entite entityToAdd = creerEntite(nom, t);
     Sommet sommetToAdd = nouvSommet(entityToAdd);
 
-    if (estVide(g->liste))
-    {
-        g->liste = adjtete(g->liste, (Sommet)sommetToAdd);
-    }
-    else
-    {
-        //* On parcours g->liste et on cherche à savoir s'il y a déjà une entité
-        //* du même nom
-        //* si non, on l'ajoute.
-        //* si oui, on l'ajoute pas.
-        if (!searchEntity(g, nom))
-        {
-            //* On a pas trouvé l'entité, on l'ajoute.
-            g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
-        }
-        //* Sinon on fait rien.
-    }
+    printf("%p\n", g->liste);
+    // if (estVide(g->liste))
+    // {
+    //     printf("vide");
+    // }
+    // if (estVide(g->liste))
+    // {
+    //     return;
+    //     g->liste = adjtete(g->liste, (Sommet)sommetToAdd);
+    // }
+    // else
+    // {
+    //     //* On parcours g->liste et on cherche à savoir s'il y a déjà une entité
+    //     //* du même nom
+    //     //* si non, on l'ajoute.
+    //     //* si oui, on l'ajoute pas.
+    //     return;
+    //     if (!searchEntity(g, nom))
+    //     {
+    //         //* On a pas trouvé l'entité, on l'ajoute.
+    //         g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
+    //     }
+    //     //* Sinon on fait rien.
+    // }
 }
 
 void afficheEntites(Relations g)
@@ -526,6 +532,8 @@ int main()
     Relations r;
     Relations *ptrR = &r;
     relationInit(ptrR);
+    printf("%p\n", r);
+    return 0;
     // ajouter les entites de l'exemple
     char *tabe[] = {"KARL", "LUDOVIC", "CELINE", "CHLOE", "GILDAS", "CEDRIC", "SEVERINE",
                     "PEUGEOT 106", "1, RUE DE LA RUE", "STRASBOURG"};
@@ -538,8 +546,8 @@ int main()
     adjEntite(r, tabe[8], ADRESSE);
     adjEntite(r, tabe[9], VILLE);
 
-    afficheEntites(r);
     return 0;
+    afficheEntites(r);
     // ajouter les relations de l'exemple
     adjRelation(r, tabe[0], tabe[1], FRERE);
     adjRelation(r, tabe[0], tabe[2], AMI);
