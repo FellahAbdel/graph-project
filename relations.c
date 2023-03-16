@@ -382,7 +382,7 @@ int compArc(void *a, void *string)
     return strcmp(arc->x->nom, (char *)string);
 }
 
-bool searchSommet(Relations g, char *nom)
+listeg searchSommet(Relations g, char *nom)
 {
     listeg currList = g->liste;
 
@@ -393,14 +393,7 @@ bool searchSommet(Relations g, char *nom)
         currList = currList->suiv;
     }
 
-    if (currList == NULL)
-    {
-        //* on a pas trouvé l'entité.
-        return false;
-    }
-
-    //* on l'a trouvé.
-    return true;
+    return currList;
 }
 // 3.4 ajout d'entites et de relations
 void adjEntite(Relations g, char *nom, etype t)
@@ -446,15 +439,37 @@ void afficheEntites(Relations g)
         i++;
     }
 }
+
 // PRE CONDITION: id doit �tre coh�rent avec les types des sommets correspondants � x et y
 //                p.ex si x est de type OBJET, id ne peut pas etre une relation de parente
 // PRE CONDITION: strcmp(nom1,nom2)!=0
-void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
+adjRelation(Relations g, char *nom1, char *nom2, rtype id)
 {
     //* Les sommets sont déjà ajoutés, ici on ajoute juste les arcs (relations).
     //* On cherche le sommet portant le nom : nom1
-    listeg somFound = rech(g->liste, (char *)nom1, compSommet);
-    printf("%p\n", somFound);
+    // listeg somFound = rech(g->liste, (char *)nom1, compSommet);
+    // printf("%p\n", somFound);
+    listeg lg = g->liste;
+    while (lg != NULL && compSommet((Sommet)lg->val, (char *)nom1) != 0)
+    {
+        lg = lg->suiv;
+    }
+
+    if (lg == NULL)
+    {
+        //* On a pas trouvé le sommet.
+        //* Il faut l'ajouté et crée la relation entre les deux sommets.
+        printf("Pas trouvé!");
+        return;
+    }
+
+    //* On l'a trouvé.
+
+    //* On cherche le deuxième somme ayant nom2 comme clé.
+
+    //* On crée l'arc avant, pour ça on a besoin d'une entite ayant comme nom : nom2
+    ((Sommet)lg->val)->larcs = adjtete(((Sommet)lg->val)->larcs, ds);
+    return;
 }
 
 ////////////////////////////////////////
@@ -551,9 +566,9 @@ int main()
     adjEntite(r, tabe[9], VILLE);
 
     afficheEntites(r);
-    return 0;
     // ajouter les relations de l'exemple
     adjRelation(r, tabe[0], tabe[1], FRERE);
+    return 0;
     adjRelation(r, tabe[0], tabe[2], AMI);
     adjRelation(r, tabe[0], tabe[3], CONNAIT);
     adjRelation(r, tabe[0], tabe[5], COUSIN);
