@@ -368,6 +368,10 @@ int compEntite(void *e, void *string)
     return strcmp(entity->nom, (char *)string);
 }
 
+/**
+ * s : est un sommet.
+ * string : est un nom.
+ */
 int compSommet(void *s, void *string)
 {
     Sommet som = (Sommet)s;
@@ -382,18 +386,17 @@ int compArc(void *a, void *string)
     return strcmp(arc->x->nom, (char *)string);
 }
 
-listeg searchSommet(Relations g, char *nom)
+listeg searchSommet(listeg liste, char *nom)
 {
-    listeg currList = g->liste;
-
     //* Tanque la liste n'est pas vide et que les deux sommets sont pas les mêmes
     //* on part au suivant.
-    while (currList != NULL && compSommet((Sommet)currList->val, (char *)nom) != 0)
+    listeg listetemp = liste;
+    while (listetemp != NULL && compSommet((Sommet)listetemp->val, (char *)nom) != 0)
     {
-        currList = currList->suiv;
+        listetemp = listetemp->suiv;
     }
 
-    return currList;
+    return listetemp;
 }
 // 3.4 ajout d'entites et de relations
 void adjEntite(Relations g, char *nom, etype t)
@@ -431,10 +434,23 @@ void afficheEntites(Relations g)
     int i = 0;
     while (curr != NULL)
     {
-        printf("%d => %p\n", i, curr);
+        // printf("%d => %p\n", i, curr);
         Sommet som = (Sommet)curr->val;
         Entite entity = (Entite)som->x;
         printf("%s\n", entity->nom);
+        printf("En rélation avec : \n");
+        listeg listeConnaissance = som->larcs;
+        printf("%p\n", listeConnaissance);
+        while (listeConnaissance != NULL)
+        {
+            Arc arc = (Arc)listeConnaissance->val;
+            Entite entity = (Entite)(arc->x);
+            printf("   %s\n", toString(arc->t));
+            printf("   %s\n", entity->nom);
+            printf("--------------------\n");
+            listeConnaissance = listeConnaissance->suiv;
+        }
+
         curr = curr->suiv;
         i++;
     }
@@ -443,33 +459,70 @@ void afficheEntites(Relations g)
 // PRE CONDITION: id doit �tre coh�rent avec les types des sommets correspondants � x et y
 //                p.ex si x est de type OBJET, id ne peut pas etre une relation de parente
 // PRE CONDITION: strcmp(nom1,nom2)!=0
-adjRelation(Relations g, char *nom1, char *nom2, rtype id)
+void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
 {
     //* Les sommets sont déjà ajoutés, ici on ajoute juste les arcs (relations).
     //* On cherche le sommet portant le nom : nom1
-    // listeg somFound = rech(g->liste, (char *)nom1, compSommet);
-    // printf("%p\n", somFound);
-    listeg lg = g->liste;
-    while (lg != NULL && compSommet((Sommet)lg->val, (char *)nom1) != 0)
+    listeg curr = g->liste;
+    Sommet s1 = NULL;
+    while (curr != NULL && s1 == NULL)
     {
-        lg = lg->suiv;
+        Sommet som = (Sommet)curr->val;
+        Entite entity = (Entite)som->x;
+        if (strcmp(entity->nom, nom1) == 0)
+        {
+            s1 = som;
+        }
+        curr = curr->suiv;
     }
-
-    if (lg == NULL)
+    if (s1 == NULL)
     {
-        //* On a pas trouvé le sommet.
-        //* Il faut l'ajouté et crée la relation entre les deux sommets.
-        printf("Pas trouvé!");
+        printf("Sommet avec le nom :  %s pas trouvé.\n", nom1);
         return;
     }
 
-    //* On l'a trouvé.
+    // Find the second vertex with name nom2
+    curr = g->liste;
+    Sommet s2 = NULL;
+    while (curr != NULL && s2 == NULL)
+    {
+        Sommet som = (Sommet)curr->val;
+        Entite entity = (Entite)som->x;
+        if (strcmp(entity->nom, nom2) == 0)
+        {
+            s2 = som;
+        }
+        curr = curr->suiv;
+    }
+    if (s2 == NULL)
+    {
+        printf("Sommet avec le nom :  %s pas trouvé.\n", nom2);
+        return;
+    }
 
-    //* On cherche le deuxième somme ayant nom2 comme clé.
+    //* Ajout du premier arc de nom1 à nom2
+    Arc newArc = nouvArc(s2->x, id);
+    s1->larcs = adjtete(s1->larcs, (Arc)newArc);
 
-    //* On crée l'arc avant, pour ça on a besoin d'une entite ayant comme nom : nom2
-    ((Sommet)lg->val)->larcs = adjtete(((Sommet)lg->val)->larcs, ds);
+    //* Ajout du second arc de nom2 à nom1
+    newArc = nouvArc(s1->x, id);
+    s2->larcs = adjtete(s2->larcs, (Arc)newArc);
+
     return;
+}
+/**
+ * listeArcs : liste des arcs du sommet.
+ * nom : clé.
+ * Return NULL ou l'arc trouvé.
+ */
+listeg searchArc(listeg listeArcs, char *nom)
+{
+    while (listeArcs != NULL && compArc(listeArcs->val, nom) != 0)
+    {
+        listeArcs = listeArcs->suiv;
+    }
+
+    return listeArcs;
 }
 
 ////////////////////////////////////////
@@ -565,10 +618,13 @@ int main()
     adjEntite(r, tabe[9], VILLE);
     adjEntite(r, tabe[9], VILLE);
 
-    afficheEntites(r);
+    // afficheEntites(r);
+
+    printf("-------------------------\n");
+
     // ajouter les relations de l'exemple
     adjRelation(r, tabe[0], tabe[1], FRERE);
-    return 0;
+    // return 0;
     adjRelation(r, tabe[0], tabe[2], AMI);
     adjRelation(r, tabe[0], tabe[3], CONNAIT);
     adjRelation(r, tabe[0], tabe[5], COUSIN);
@@ -579,6 +635,11 @@ int main()
     adjRelation(r, tabe[5], tabe[8], LOCATAIRE);
     adjRelation(r, tabe[7], tabe[8], DECOUVERT);
     adjRelation(r, tabe[8], tabe[9], SITUE);
+
+    afficheEntites(r);
+    // afficheRelations(r, tabe[0]);
+    // afficheEntites(r);
+    return 0;
 
     // explorer les relations
     printf("%s est en relation avec:\n", tabe[0]);
