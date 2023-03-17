@@ -456,60 +456,6 @@ void afficheEntites(Relations g)
     }
 }
 
-// PRE CONDITION: id doit �tre coh�rent avec les types des sommets correspondants � x et y
-//                p.ex si x est de type OBJET, id ne peut pas etre une relation de parente
-// PRE CONDITION: strcmp(nom1,nom2)!=0
-void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
-{
-    //* Les sommets sont déjà ajoutés, ici on ajoute juste les arcs (relations).
-    //* On cherche le sommet portant le nom : nom1
-    listeg curr = g->liste;
-    Sommet s1 = NULL;
-    while (curr != NULL && s1 == NULL)
-    {
-        Sommet som = (Sommet)curr->val;
-        Entite entity = (Entite)som->x;
-        if (strcmp(entity->nom, nom1) == 0)
-        {
-            s1 = som;
-        }
-        curr = curr->suiv;
-    }
-    if (s1 == NULL)
-    {
-        printf("Sommet avec le nom :  %s pas trouvé.\n", nom1);
-        return;
-    }
-
-    // Find the second vertex with name nom2
-    curr = g->liste;
-    Sommet s2 = NULL;
-    while (curr != NULL && s2 == NULL)
-    {
-        Sommet som = (Sommet)curr->val;
-        Entite entity = (Entite)som->x;
-        if (strcmp(entity->nom, nom2) == 0)
-        {
-            s2 = som;
-        }
-        curr = curr->suiv;
-    }
-    if (s2 == NULL)
-    {
-        printf("Sommet avec le nom :  %s pas trouvé.\n", nom2);
-        return;
-    }
-
-    //* Ajout du premier arc de nom1 à nom2
-    Arc newArc = nouvArc(s2->x, id);
-    s1->larcs = adjtete(s1->larcs, (Arc)newArc);
-
-    //* Ajout du second arc de nom2 à nom1
-    newArc = nouvArc(s1->x, id);
-    s2->larcs = adjtete(s2->larcs, (Arc)newArc);
-
-    return;
-}
 /**
  * listeArcs : liste des arcs du sommet.
  * nom : clé.
@@ -523,6 +469,69 @@ listeg searchArc(listeg listeArcs, char *nom)
     }
 
     return listeArcs;
+}
+
+// PRE CONDITION: id doit �tre coh�rent avec les types des sommets correspondants � x et y
+//                p.ex si x est de type OBJET, id ne peut pas etre une relation de parente
+// PRE CONDITION: strcmp(nom1,nom2)!=0
+void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
+{
+    //* Les sommets sont déjà ajoutés, ici on ajoute juste les arcs (relations).
+    //* On cherche le sommet portant le nom : nom1
+    listeg curr = g->liste;
+    Sommet s1 = NULL;
+    while (curr != NULL && s1 == NULL)
+    {
+        Sommet som = (Sommet)curr->val;
+        if (compSommet(som, nom1) == 0)
+        {
+            s1 = som;
+        }
+        curr = curr->suiv;
+    }
+
+    // Find the second vertex with name nom2
+    curr = g->liste;
+    Sommet s2 = NULL;
+    while (curr != NULL && s2 == NULL)
+    {
+        Sommet som = (Sommet)curr->val;
+        if (compSommet(som, nom2) == 0)
+        {
+            s2 = som;
+        }
+        curr = curr->suiv;
+    }
+
+    listeg nodeArc1 = searchArc(s1->larcs, nom2);
+    if (nodeArc1 != NULL)
+    {
+        //* L'arc existe déjà, on met à jour l'id.
+        Arc arcFound = (Arc)nodeArc1->val;
+        arcFound->t = id;
+    }
+    else
+    {
+        //* Ajout du premier arc de nom1 à nom2
+        Arc newArc = nouvArc(s2->x, id);
+        s1->larcs = adjtete(s1->larcs, (Arc)newArc);
+    }
+
+    listeg nodeArc2 = searchArc(s2->larcs, nom1);
+    if (nodeArc2 != NULL)
+    {
+        //* L'arc existe déjà, on met à jour l'id.
+        Arc arcFound = (Arc)nodeArc2->val;
+        arcFound->t = id;
+    }
+    else
+    {
+        //* Ajout du second arc de nom2 à nom1
+        Arc newArc = nouvArc(s1->x, id);
+        s2->larcs = adjtete(s2->larcs, (Arc)newArc);
+    }
+
+    return;
 }
 
 ////////////////////////////////////////
