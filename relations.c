@@ -257,7 +257,8 @@ Sommet nouvSommet(Entite e)
     checkMalloc((Sommet)newSommet);
 
     newSommet->larcs = listegnouv();
-    newSommet->x = e;
+    // newSommet->x = e;
+    memcpy(newSommet->x, e, sizeof(struct s_entite));
 
     return newSommet;
 }
@@ -269,7 +270,8 @@ Arc nouvArc(Entite e, rtype type)
     checkMalloc((Arc)newArc);
 
     newArc->t = type;
-    newArc->x = e;
+    memcpy(newArc->x, e, sizeof(struct s_entite));
+    // newArc->x = e;
 
     return newArc;
 }
