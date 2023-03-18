@@ -341,14 +341,16 @@ void relationFree(Relations *g)
     while ((*g)->liste != NULL)
     {
         //* On recupère le sommet courrant.
-        Sommet som = (Sommet)((*g)->liste)->val;
+        // Sommet som = ((Sommet)((*g)->liste)->val);
         // listeg listeConnaissance = som->larcs;
 
         //* On efface la liste des rélations.
-        freeLarcs(&(som->larcs));
+        freeLarcs(&((Sommet)((*g)->liste)->val)->larcs);
 
         //* On efface le sommet.
-        freeSommet(&som);
+        freeSommet((Sommet *)&((*g)->liste->val));
+
+        // freeSommet(&((Sommet)((*g)->liste)->val));
 
         //* On efface la tête.
         (*g)->liste = suptete((*g)->liste);
@@ -425,6 +427,9 @@ void adjEntite(Relations g, char *nom, etype t)
         }
         //* Sinon on fait rien.
     }
+
+    //* ça été copié, nous en avons plus bésoin.
+    free(entityToAdd);
 }
 
 void afficheEntites(Relations g)
@@ -635,7 +640,6 @@ int main()
     //* On ajoute les objets.
     adjEntite(r, tabe[7], OBJET);
     adjEntite(r, tabe[8], ADRESSE);
-    adjEntite(r, tabe[9], VILLE);
     adjEntite(r, tabe[9], VILLE);
 
     // afficheEntites(r);
