@@ -261,7 +261,7 @@ Sommet nouvSommet(Entite e)
     checkMalloc(newSommet->x);
 
     newSommet->larcs = listegnouv();
-    // newSommet->x = e;
+
     memcpy(newSommet->x, e, sizeof(struct s_entite));
 
     return newSommet;
@@ -279,7 +279,6 @@ Arc nouvArc(Entite e, rtype type)
 
     newArc->t = type;
     memcpy(newArc->x, e, sizeof(struct s_entite));
-    // newArc->x = e;
 
     return newArc;
 }
@@ -292,150 +291,6 @@ void relationInit(Relations *g)
 
     (*g)->liste = listegnouv();
 }
-
-void freeEntity(Entite entity)
-{
-    free(entity);
-}
-
-void freeArc(Arc arc)
-{
-    free(arc);
-}
-
-// void freeLarcs(listeg *plarcs)
-// {
-//     if (estVide(*plarcs))
-//     {
-//         return;
-//     }
-
-//     //* On recupère le premier arc.
-//     Arc firstArc = (Arc)(*plarcs)->val;
-
-//     //* On supprime l'entite.
-//     // freeEntity((Entite)firstArc->x);
-//     free(firstArc->x);
-
-//     //* On supprime l'arc.
-//     free(firstArc);
-
-//     //* On supprime la tête de la liste des arcs.
-//     *plarcs = suptete(*plarcs);
-
-//     //* Et on refait le même traitement sur l'arc suivant.
-//     freeLarcs(plarcs);
-// }
-
-// void freeListeNoeuds(listeg *plg)
-// {
-//     if (estVide(*plg))
-//     {
-//         return;
-//     }
-//     //* On recupère le 1er sommet.
-//     Sommet sommet = (Sommet)(*plg)->val;
-
-//     //* On recupère la liste des arcs du 1er sommet.
-//     listeg larcs = sommet->larcs;
-
-//     //* On efface tous ces arcs.
-//     freeLarcs(&(sommet->larcs));
-
-//     //* On efface le 1er sommet.
-//     //* On efface l'entite du sommet avant.
-//     freeEntity(sommet->x);
-//     free(sommet);
-
-//     //* On efface la tête de la liste des noeuds.
-//     *plg = suptete(*plg);
-//     ;
-
-//     //* On refait le même traitement sur la tête suivante
-//     freeListeNoeuds(plg);
-// }
-
-// void relationFree(Relations *g)
-// {
-//     Relations r = *g;
-
-//     if (r == NULL)
-//     {
-//         return;
-//     }
-
-//     listeg liste = r->liste;
-
-//     freeListeNoeuds(&liste);
-
-//     free(r);
-//     *g = NULL;
-// }
-
-// void freeArcs(listeg larcs)
-// {
-//     if (larcs == NULL)
-//     {
-//         return;
-//     }
-
-//     listeg curr = larcs;
-//     while (curr != NULL)
-//     {
-//         Arc arc = (Arc)curr->val;
-//         free(arc->x);
-//         curr = suptete(curr);
-//     }
-//     // freeArcs(larcs->suiv);
-
-//     // Arc arc = (Arc)larcs->val;
-//     // if (arc->x != NULL)
-//     // {
-//     //     free(arc->x);
-//     // }
-//     // if (arc != NULL)
-//     // {
-//     //     free(arc);
-//     // }
-//     // free(larcs);
-// }
-
-// void freeSommet(Sommet sommet)
-// {
-//     if (sommet == NULL)
-//     {
-//         return;
-//     }
-
-//     freeArcs(sommet->larcs);
-
-//     // if (sommet->x != NULL)
-//     // {
-//     //     free(sommet->x);
-//     // }
-//     free(sommet->x);
-//     free(sommet);
-// }
-
-// void relationFree(Relations *g)
-// {
-//     if (*g == NULL || g == NULL)
-//     {
-//         return;
-//     }
-//     else
-//     {
-//         listeg curr = (*g)->liste;
-//         while (curr != NULL)
-//         {
-//             Sommet som = (Sommet)curr->val;
-//             freeSommet(som);
-//             curr = curr->suiv;
-//         }
-//         free(*g);
-//         *g = NULL;
-//     }
-// }
 
 void freeLarcs(listeg *ptrlisteOfArcs)
 {
@@ -468,7 +323,10 @@ void freeSommet(Sommet *ptrSommet)
         return;
     }
 
+    //* On efface l'entite dans le sommet.
     free((*ptrSommet)->x);
+
+    //* On efface le sommet lui-même.
     free(*ptrSommet);
 }
 
@@ -480,7 +338,6 @@ void relationFree(Relations *g)
     }
 
     // listeg curr = (*g)->liste;
-    int i = 0;
     while ((*g)->liste != NULL)
     {
         //* On recupère le sommet courrant.
@@ -495,8 +352,11 @@ void relationFree(Relations *g)
 
         //* On efface la tête.
         (*g)->liste = suptete((*g)->liste);
-        return;
     }
+
+    free(*g);
+    *g = NULL;
+    return;
 }
 
 // 3.3 les comparaisons
@@ -569,7 +429,18 @@ void adjEntite(Relations g, char *nom, etype t)
 
 void afficheEntites(Relations g)
 {
+    if (g == NULL)
+    {
+        return;
+    }
+
     listeg curr = g->liste;
+    if (curr == NULL)
+    {
+        printf("Graphe Vide.\n");
+        return;
+    }
+
     int i = 0;
     while (curr != NULL)
     {
