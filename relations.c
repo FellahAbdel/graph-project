@@ -256,6 +256,10 @@ Sommet nouvSommet(Entite e)
 
     checkMalloc((Sommet)newSommet);
 
+    newSommet->x = (Entite)malloc(sizeof(struct s_entite));
+
+    checkMalloc(newSommet->x);
+
     newSommet->larcs = listegnouv();
     // newSommet->x = e;
     memcpy(newSommet->x, e, sizeof(struct s_entite));
@@ -268,6 +272,10 @@ Arc nouvArc(Entite e, rtype type)
     Arc newArc = (Arc)malloc(sizeof(struct s_arc));
 
     checkMalloc((Arc)newArc);
+
+    newArc->x = (Entite)malloc(sizeof(struct s_entite));
+
+    checkMalloc(newArc->x);
 
     newArc->t = type;
     memcpy(newArc->x, e, sizeof(struct s_entite));
