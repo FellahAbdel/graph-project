@@ -341,7 +341,7 @@ void relationFree(Relations *g)
     while ((*g)->liste != NULL)
     {
         //* On recupère le sommet courrant.
-        // Sommet som = ((Sommet)((*g)->liste)->val);
+        Sommet som = ((Sommet)((*g)->liste)->val);
         // listeg listeConnaissance = som->larcs;
 
         //* On efface la liste des rélations.
@@ -556,17 +556,65 @@ void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
 // 4.1 listes de relations
 listeg en_relation(Relations g, char *x)
 {
-    return NULL;
+    listeg listSommet = g->liste;
+    listeg listeOfArcs = NULL;
+
+    listeg sommetFound = rech(listSommet, (char *)x, compSommet);
+
+    if (sommetFound != NULL)
+    {
+        //* Le sommet de nom x a été trouvé.
+        Sommet som = (Sommet)sommetFound->val;
+        listeOfArcs = som->larcs;
+    }
+
+    return listeOfArcs;
 }
+
 listeg chemin2(Relations g, char *x, char *y)
 {
-    return NULL;
+    listeg listOfArcsX = en_relation(g, x);
+    listeg listOfArcsY = en_relation(g, y);
+    listeg cheminList = listegnouv();
+
+    //* On parcourt listOfArcsX
+    while (listOfArcsX != NULL)
+    {
+        //* On recupère le premier arc.
+        Arc currArcX = (Arc)listOfArcsX->val;
+
+        //* On recupère l'entité.
+        Entite entity = currArcX->x;
+
+        listeg arcFound = searchArc(listOfArcsY, entity->nom);
+
+        if (arcFound != NULL)
+        {
+            Arc arc = (Arc)arcFound->val;
+            cheminList = adjtete(cheminList, (Entite)arc->x);
+            // printf("found : %s\n", arc->x->nom);
+        }
+
+        listOfArcsX = listOfArcsX->suiv;
+    }
+    return cheminList;
 }
+
 // 4.2 verifier un lien de parente
 // PRE CONDITION: strcmp(x,y)!=0
 bool ont_lien_parente(Relations g, char *x, char *y)
 {
-    return false;
+    listeg listOfArcs = en_relation(g, x);
+    bool isFamily = false;
+    listeg arcNodeFound = searchArc(listOfArcs, x);
+
+    if (arcNodeFound != NULL)
+    {
+        Arc arc = (Arc)arcNodeFound;
+        isFamily = est_lien_parente(arc->t);
+    }
+
+    return isFamily;
 }
 
 // 4.3 tester connaissances
@@ -661,13 +709,16 @@ int main()
     adjRelation(r, tabe[8], tabe[9], SITUE);
 
     afficheEntites(r);
-    relationFree(&r);
+    // relationFree(&r);
 
     printf("\n\n\n");
-    afficheEntites(r);
-
-    // afficheRelations(r, tabe[0]);
     // afficheEntites(r);
+
+    listeg listeOfArcs = en_relation(r, tabe[0]);
+
+    chemin2(r, tabe[0], tabe[8]);
+    // Arc arc = (Arc)listeOfArcs->val;
+    // printf("%s", ((Entite)arc->x)->nom);
     return 0;
 
     // explorer les relations
