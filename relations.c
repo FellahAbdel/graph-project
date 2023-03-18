@@ -293,71 +293,200 @@ void freeArc(Arc arc)
     free(arc);
 }
 
-void freeLarcs(listeg larcs)
+// void freeLarcs(listeg *plarcs)
+// {
+//     if (estVide(*plarcs))
+//     {
+//         return;
+//     }
+
+//     //* On recupère le premier arc.
+//     Arc firstArc = (Arc)(*plarcs)->val;
+
+//     //* On supprime l'entite.
+//     // freeEntity((Entite)firstArc->x);
+//     free(firstArc->x);
+
+//     //* On supprime l'arc.
+//     free(firstArc);
+
+//     //* On supprime la tête de la liste des arcs.
+//     *plarcs = suptete(*plarcs);
+
+//     //* Et on refait le même traitement sur l'arc suivant.
+//     freeLarcs(plarcs);
+// }
+
+// void freeListeNoeuds(listeg *plg)
+// {
+//     if (estVide(*plg))
+//     {
+//         return;
+//     }
+//     //* On recupère le 1er sommet.
+//     Sommet sommet = (Sommet)(*plg)->val;
+
+//     //* On recupère la liste des arcs du 1er sommet.
+//     listeg larcs = sommet->larcs;
+
+//     //* On efface tous ces arcs.
+//     freeLarcs(&(sommet->larcs));
+
+//     //* On efface le 1er sommet.
+//     //* On efface l'entite du sommet avant.
+//     freeEntity(sommet->x);
+//     free(sommet);
+
+//     //* On efface la tête de la liste des noeuds.
+//     *plg = suptete(*plg);
+//     ;
+
+//     //* On refait le même traitement sur la tête suivante
+//     freeListeNoeuds(plg);
+// }
+
+// void relationFree(Relations *g)
+// {
+//     Relations r = *g;
+
+//     if (r == NULL)
+//     {
+//         return;
+//     }
+
+//     listeg liste = r->liste;
+
+//     freeListeNoeuds(&liste);
+
+//     free(r);
+//     *g = NULL;
+// }
+
+// void freeArcs(listeg larcs)
+// {
+//     if (larcs == NULL)
+//     {
+//         return;
+//     }
+
+//     listeg curr = larcs;
+//     while (curr != NULL)
+//     {
+//         Arc arc = (Arc)curr->val;
+//         free(arc->x);
+//         curr = suptete(curr);
+//     }
+//     // freeArcs(larcs->suiv);
+
+//     // Arc arc = (Arc)larcs->val;
+//     // if (arc->x != NULL)
+//     // {
+//     //     free(arc->x);
+//     // }
+//     // if (arc != NULL)
+//     // {
+//     //     free(arc);
+//     // }
+//     // free(larcs);
+// }
+
+// void freeSommet(Sommet sommet)
+// {
+//     if (sommet == NULL)
+//     {
+//         return;
+//     }
+
+//     freeArcs(sommet->larcs);
+
+//     // if (sommet->x != NULL)
+//     // {
+//     //     free(sommet->x);
+//     // }
+//     free(sommet->x);
+//     free(sommet);
+// }
+
+// void relationFree(Relations *g)
+// {
+//     if (*g == NULL || g == NULL)
+//     {
+//         return;
+//     }
+//     else
+//     {
+//         listeg curr = (*g)->liste;
+//         while (curr != NULL)
+//         {
+//             Sommet som = (Sommet)curr->val;
+//             freeSommet(som);
+//             curr = curr->suiv;
+//         }
+//         free(*g);
+//         *g = NULL;
+//     }
+// }
+
+void freeLarcs(listeg *ptrlisteOfArcs)
 {
-    if (estVide(larcs))
+    if (estVide(*ptrlisteOfArcs))
     {
         return;
     }
+    // listeg curr = *ptrlisteOfArcs;
 
-    //* On recupère le premier arc.
-    Arc firstArc = (Arc)larcs->val;
+    //* Destruction : mais avant on a bésoin de supprimer l'entité
+    //* Dans l'arc, c'est pourquoi on ne peut pas utiliser la fonction
+    //* detruire() ici.
+    while ((*ptrlisteOfArcs) != NULL)
+    {
+        //* On nettoie l'entite dans l'arc.
+        free(((Arc)(*ptrlisteOfArcs)->val)->x);
 
-    //* On supprime l'entite.
-    freeEntity(firstArc->x);
+        //* On nettoie l'arc lui-même.
+        free((Arc)(*ptrlisteOfArcs)->val);
 
-    //* On supprime l'arc.
-    free(firstArc);
-
-    //* On supprime la tête de la liste des arcs.
-    larcs = suptete(larcs);
-
-    //* Et on refait le même traitement sur l'arc suivant.
-    freeLarcs(larcs);
+        //* Après on supprime la tête courrante.
+        (*ptrlisteOfArcs) = suptete(*ptrlisteOfArcs);
+    }
 }
 
-void freeListeNoeuds(listeg lg)
+void freeSommet(Sommet *ptrSommet)
 {
-    if (estVide(lg))
+    if (*ptrSommet == NULL)
     {
         return;
     }
-    //* On recupère le 1er sommet.
-    Sommet sommet = (Sommet)lg->val;
 
-    //* On recupère la liste des arcs du 1er sommet.
-    listeg larcs = sommet->larcs;
-
-    //* On efface tous ces arcs.
-    freeLarcs(larcs);
-
-    //* On efface le 1er sommet.
-    //* On efface l'entite du sommet avant.
-    freeEntity(sommet->x);
-    free(sommet);
-
-    //* On efface la tête de la liste des noeuds.
-    lg = suptete(lg);
-
-    //* On refait le même traitement sur la tête suivante
-    freeListeNoeuds(lg);
-    //
+    free((*ptrSommet)->x);
+    free(*ptrSommet);
 }
 
 void relationFree(Relations *g)
 {
-    Relations r = *g;
-
-    if (r == NULL)
+    if (*g == NULL)
     {
         return;
     }
 
-    listeg liste = r->liste;
+    // listeg curr = (*g)->liste;
+    int i = 0;
+    while ((*g)->liste != NULL)
+    {
+        //* On recupère le sommet courrant.
+        Sommet som = (Sommet)((*g)->liste)->val;
+        // listeg listeConnaissance = som->larcs;
 
-    freeListeNoeuds(liste);
+        //* On efface la liste des rélations.
+        freeLarcs(&(som->larcs));
 
-    return;
+        //* On efface le sommet.
+        freeSommet(&som);
+
+        //* On efface la tête.
+        (*g)->liste = suptete((*g)->liste);
+        return;
+    }
 }
 
 // 3.3 les comparaisons
@@ -447,10 +576,10 @@ void afficheEntites(Relations g)
             Entite entity = (Entite)(arc->x);
             printf("   %s\n", toString(arc->t));
             printf("   %s\n", entity->nom);
+            printf("   %p\n", entity);
             printf("--------------------\n");
             listeConnaissance = listeConnaissance->suiv;
         }
-
         curr = curr->suiv;
         i++;
     }
@@ -477,6 +606,7 @@ listeg searchArc(listeg listeArcs, char *nom)
 void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
 {
     //* Les sommets sont déjà ajoutés, ici on ajoute juste les arcs (relations).
+
     //* On cherche le sommet portant le nom : nom1
     listeg curr = g->liste;
     Sommet s1 = NULL;
@@ -490,7 +620,7 @@ void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
         curr = curr->suiv;
     }
 
-    // Find the second vertex with name nom2
+    //* On cherche le sommet 2 portant le nom : nom2
     curr = g->liste;
     Sommet s2 = NULL;
     while (curr != NULL && s2 == NULL)
@@ -646,6 +776,11 @@ int main()
     adjRelation(r, tabe[8], tabe[9], SITUE);
 
     afficheEntites(r);
+    relationFree(&r);
+
+    printf("\n\n\n");
+    afficheEntites(r);
+
     // afficheRelations(r, tabe[0]);
     // afficheEntites(r);
     return 0;
@@ -687,7 +822,7 @@ int main()
 
     affiche_degre_relations(r, tabe[3]);
 
-    relationFree(&r);
+    // relationFree(&r);
 
     printf("\nPRESS RETURN\n");
     char buff[64];
