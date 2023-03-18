@@ -616,13 +616,43 @@ bool ont_lien_parente(Relations g, char *x, char *y)
 
     return isFamily;
 }
-
 // 4.3 tester connaissances
 // PRE CONDITION: les sommets correspondants � x et y sont de type PERSONNE
 // PRE CONDITION: strcmp(x,y)!=0
 bool se_connaissent(Relations g, char *x, char *y)
 {
-    return false;
+    //* On recupère la liste des rélations de x.
+    listeg listOfArcsX = en_relation(g, x);
+    bool isRelationship = false;
+
+    listeg arcNodeFound = searchArc(listOfArcsX, y);
+
+    if (arcNodeFound != NULL)
+    {
+        //* On l'a trouvé parmis ses voisins.
+        Arc arc = (Arc)arcNodeFound->val;
+        rtype type = arc->t;
+        bool estParenteOk = est_lien_parente(type);
+        bool estConaissanceOk = est_lien_parente(type);
+        bool estProfessionelOk = est_lien_parente(type);
+        isRelationship = estParenteOk || estConaissanceOk || estProfessionelOk;
+    }
+    else
+    {
+        //* Sinon, on regarde parmis les voisins communs.
+        listeg commonNeighbours = chemin2(g, x, y);
+        while (commonNeighbours != NULL)
+        {
+            Entite entity = (Entite)commonNeighbours->val;
+            char *z = entity->nom;
+            if (ont_lien_parente(g, x, z) && ont_lien_parente(g, z, y))
+            {
+                isRelationship = true;
+            }
+        }
+    }
+
+    return isRelationship;
 }
 // PRE CONDITION: les sommets correspondants � x et y sont de type PERSONNE
 // PRE CONDITION: strcmp(x,y)!=0
@@ -718,7 +748,7 @@ int main()
 
     // chemin2(r, tabe[0], tabe[8]);
 
-    if (ont_lien_parente(r, tabe[1], tabe[0]))
+    if (ont_lien_parente(r, tabe[0], tabe[2]))
     {
         printf("oui\n");
     }
