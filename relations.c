@@ -606,11 +606,11 @@ bool ont_lien_parente(Relations g, char *x, char *y)
 {
     listeg listOfArcs = en_relation(g, x);
     bool isFamily = false;
-    listeg arcNodeFound = searchArc(listOfArcs, x);
+    listeg arcNodeFound = searchArc(listOfArcs, y);
 
     if (arcNodeFound != NULL)
     {
-        Arc arc = (Arc)arcNodeFound;
+        Arc arc = (Arc)arcNodeFound->val;
         isFamily = est_lien_parente(arc->t);
     }
 
@@ -714,9 +714,18 @@ int main()
     printf("\n\n\n");
     // afficheEntites(r);
 
-    listeg listeOfArcs = en_relation(r, tabe[0]);
+    // listeg listeOfArcs = en_relation(r, tabe[0]);
 
-    chemin2(r, tabe[0], tabe[8]);
+    // chemin2(r, tabe[0], tabe[8]);
+
+    if (ont_lien_parente(r, tabe[1], tabe[0]))
+    {
+        printf("oui\n");
+    }
+    else
+    {
+        printf("non\n");
+    }
     // Arc arc = (Arc)listeOfArcs->val;
     // printf("%s", ((Entite)arc->x)->nom);
     return 0;
