@@ -566,6 +566,9 @@ listeg en_relation(Relations g, char *x)
         //* Le sommet de nom x a été trouvé.
         Sommet som = (Sommet)sommetFound->val;
         listeOfArcs = som->larcs;
+
+        //* On n'oublie de detruire la liste.
+        detruire(sommetFound);
     }
 
     return listeOfArcs;
@@ -758,6 +761,7 @@ int main()
     }
     // Arc arc = (Arc)listeOfArcs->val;
     // printf("%s", ((Entite)arc->x)->nom);
+    relationFree(&r);
     return 0;
 
     // explorer les relations
