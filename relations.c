@@ -644,16 +644,18 @@ bool se_connaissent(Relations g, char *x, char *y)
     {
         //* Sinon, on regarde parmis les voisins communs.
         listeg commonNeighbours = chemin2(g, x, y);
-        while (commonNeighbours != NULL)
+        listeg temp = commonNeighbours;
+        while (temp != NULL)
         {
-            Entite entity = (Entite)commonNeighbours->val;
+            Entite entity = (Entite)temp->val;
             char *z = entity->nom;
             if (ont_lien_parente(g, x, z) && ont_lien_parente(g, z, y))
             {
                 isRelationship = true;
             }
-            commonNeighbours = commonNeighbours->suiv;
+            temp = temp->suiv;
         }
+        detruire(commonNeighbours);
     }
 
     return isRelationship;
@@ -678,7 +680,7 @@ bool _isRelationDirecte(Relations g, char *x, char *y)
 // PRE CONDITION: strcmp(x,y)!=0
 bool se_connaissent_proba(Relations g, char *x, char *y)
 {
-    bool probablyRelation = true;
+    bool probablyRelation = false;
     if (_isRelationDirecte(g, x, y))
     {
         probablyRelation = false;
@@ -686,16 +688,18 @@ bool se_connaissent_proba(Relations g, char *x, char *y)
     else
     {
         listeg commonNeighbours = chemin2(g, x, y);
-        while (commonNeighbours != NULL)
+        listeg temp = commonNeighbours;
+        while (temp != NULL)
         {
-            Entite entity = (Entite)commonNeighbours->val;
+            Entite entity = (Entite)temp->val;
             char *z = entity->nom;
-            if ((ont_lien_parente(g, x, z) && !ont_lien_parente(g, z, y)) || (!ont_lien_parente(g, x, z) && ont_lien_parente(g, z, y)))
+            if ((ont_lien_parente(g, x, z) && !ont_lien_parente(g, y, z)) || (!ont_lien_parente(g, x, z) && ont_lien_parente(g, y, z)))
             {
                 probablyRelation = true;
             }
-            commonNeighbours = commonNeighbours->suiv;
+            temp = temp->suiv;
         }
+        detruire(commonNeighbours);
     }
 
     return probablyRelation;
@@ -812,6 +816,7 @@ int main()
 
     afficheEntites(r);
     // relationFree(&r);
+    // return 0;
 
     printf("\n\n\n");
     // afficheEntites(r);
@@ -856,8 +861,10 @@ int main()
         for (j = i + 1; j < 10; j++)
         {
             printf("<%s> et <%s> ont les relations communes:\n", tabe[i], tabe[j]);
-            affichelg(chemin2(r, tabe[i], tabe[j]), afficheEntiteR);
+            listeg ch = chemin2(r, tabe[i], tabe[j]);
+            affichelg(ch, afficheEntiteR);
             printf("\n");
+            detruire(ch);
         }
     printf("\n\n");
 
@@ -867,6 +874,7 @@ int main()
             printf("<%s> et <%s> ont lien de parente: %s\n",
                    tabe[i], tabe[j], ont_lien_parente(r, tabe[i], tabe[j]) ? "vrai" : "faux");
         }
+
     printf("\n");
     for (i = 0; i < 7; i++)
     {
@@ -874,14 +882,16 @@ int main()
         {
             printf("<%s> et <%s> se connaissent: %s\n",
                    tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
-            // printf("<%s> et <%s> se connaissent tres probablement: %s\n",
-            //        tabe[i], tabe[j], se_connaissent_proba(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            printf("<%s> et <%s> se connaissent tres probablement: %s\n",
+                   tabe[i], tabe[j], se_connaissent_proba(r, tabe[i], tabe[j]) ? "vrai" : "faux");
             // printf("<%s> et <%s> se connaissent peut etre: %s\n",
             //        tabe[i], tabe[j], se_connaissent_peutetre(r, tabe[i], tabe[j]) ? "vrai" : "faux");
         }
         printf("\n");
     }
 
+    relationFree(&r);
+    return 0;
     affiche_degre_relations(r, tabe[3]);
 
     relationFree(&r);
