@@ -44,7 +44,7 @@ bool est_lien_professionel(rtype id)
 
 bool est_lien_connaissance(rtype id)
 {
-    return id <= AMI && id <= CONNAIT;
+    return id >= AMI && id <= CONNAIT;
 }
 
 char *toString(rtype id)
@@ -567,7 +567,7 @@ listeg en_relation(Relations g, char *x)
         Sommet som = (Sommet)sommetFound->val;
         listeOfArcs = som->larcs;
 
-        //* On n'oublie de detruire la liste.
+        //* On n'oublie pas de detruire la liste.
         detruire(sommetFound);
     }
 
@@ -658,12 +658,49 @@ bool se_connaissent(Relations g, char *x, char *y)
 
     return isRelationship;
 }
+
+bool _isRelationDirecte(Relations g, char *x, char *y)
+{
+    listeg listOfArcsX = en_relation(g, x);
+    bool isDirectRelationship = false;
+
+    listeg arcNodeFound = searchArc(listOfArcsX, y);
+
+    if (arcNodeFound != NULL)
+    {
+        //* On l'a trouvé parmis ses voisins. Donc  c'est une relation directe.
+        isDirectRelationship = true;
+    }
+
+    return isDirectRelationship;
+}
 // PRE CONDITION: les sommets correspondants � x et y sont de type PERSONNE
 // PRE CONDITION: strcmp(x,y)!=0
 bool se_connaissent_proba(Relations g, char *x, char *y)
 {
-    return false;
+    bool probablyRelation = true;
+    if (_isRelationDirecte(g, x, y))
+    {
+        probablyRelation = false;
+    }
+    else
+    {
+        listeg commonNeighbours = chemin2(g, x, y);
+        while (commonNeighbours != NULL)
+        {
+            Entite entity = (Entite)commonNeighbours->val;
+            char *z = entity->nom;
+            if ((ont_lien_parente(g, x, z) && !ont_lien_parente(g, z, y)) || (!ont_lien_parente(g, x, z) && ont_lien_parente(g, z, y)))
+            {
+                probablyRelation = true;
+            }
+            commonNeighbours = commonNeighbours->suiv;
+        }
+    }
+
+    return probablyRelation;
 }
+
 // PRE CONDITION: les sommets correspondants � x et y sont de type PERSONNE
 // PRE CONDITION: strcmp(x,y)!=0
 bool se_connaissent_peutetre(Relations g, char *x, char *y)
@@ -701,6 +738,37 @@ void afficheArc(void *x)
 // Exercice 6: Parcours
 void affiche_degre_relations(Relations r, char *x)
 {
+}
+
+void afficheEntiteR(void *x)
+{
+    Entite e = (Entite)x;
+    printf("%s : ", e->nom);
+    switch (e->ident)
+    {
+    case PERSONNE:
+        printf("PERSONNE\n");
+        break;
+    case OBJET:
+        printf("OBJET\n");
+        break;
+    case ADRESSE:
+        printf("ADRESSE\n");
+        break;
+    case VILLE:
+        printf("VILLE\n");
+        break;
+    default:
+        printf("Type d'entité inconnu\n");
+    }
+}
+
+void afficheArcR(void *x)
+{
+    Arc a = (Arc)x;
+    printf("-- %s -->", toString(a->t));
+    void *entite = a->x;
+    afficheEntite(entite);
 }
 
 int main()
@@ -750,7 +818,9 @@ int main()
 
     // listeg listeOfArcs = en_relation(r, tabe[0]);
 
-    // chemin2(r, tabe[0], tabe[8]);
+    // printf("Liste des entites communes.\n");
+    // affichelg(chemin2(r, tabe[6], tabe[1]), afficheEntiteR);
+    // return 0;
 
     if (ont_lien_parente(r, tabe[0], tabe[2]))
     {
@@ -762,25 +832,31 @@ int main()
     }
 
     // Test de la fonction se connaissent.
-    printf("%s se connait avec %s : %s\n", tabe[0], tabe[1], se_connaissent(r, tabe[0], tabe[1]) ? "true" : "false");
-    printf("%s se connait avec %s : %s\n", tabe[0], tabe[2], se_connaissent(r, tabe[0], tabe[2]) ? "true" : "false");
-    printf("%s se connait avec %s : %s\n", tabe[2], tabe[3], se_connaissent(r, tabe[2], tabe[3]) ? "true" : "false");
-    printf("%s se connait avec %s : %s\n", tabe[1], tabe[5], se_connaissent(r, tabe[1], tabe[5]) ? "true" : "false");
+    // printf("%s se connait avec %s : %s\n", tabe[0], tabe[1], se_connaissent(r, tabe[0], tabe[1]) ? "true" : "false");
+    // printf("%s se connait avec %s : %s\n", tabe[0], tabe[2], se_connaissent(r, tabe[0], tabe[2]) ? "true" : "false");
+    // printf("%s se connait avec %s : %s\n", tabe[2], tabe[3], se_connaissent(r, tabe[2], tabe[3]) ? "true" : "false");
+    // printf("%s se connait avec %s : %s\n", tabe[1], tabe[5], se_connaissent(r, tabe[1], tabe[5]) ? "true" : "false");
+    // printf("%s se connait avec %s : %s\n", tabe[0], tabe[5], se_connaissent(r, tabe[0], tabe[5]) ? "true" : "false");
+    char *chloe = tabe[3];
+    char *gildas = tabe[4];
+
+    printf("%s se connait avec %s : %s\n", chloe, gildas, se_connaissent(r, chloe, gildas) ? "true" : "false");
+    return 0;
     // // Arc arc = (Arc)listeOfArcs->val;
     // printf("%s", ((Entite)arc->x)->nom);
-    relationFree(&r);
-    return 0;
+    // relationFree(&r);
+    // return 0;
 
     // explorer les relations
     printf("%s est en relation avec:\n", tabe[0]);
-    affichelg(en_relation(r, tabe[0]), afficheArc);
+    affichelg(en_relation(r, tabe[0]), afficheArcR);
     printf("\n");
 
     for (i = 0; i < 7; i++)
         for (j = i + 1; j < 10; j++)
         {
             printf("<%s> et <%s> ont les relations communes:\n", tabe[i], tabe[j]);
-            affichelg(chemin2(r, tabe[i], tabe[j]), afficheEntite);
+            affichelg(chemin2(r, tabe[i], tabe[j]), afficheEntiteR);
             printf("\n");
         }
     printf("\n\n");
@@ -796,19 +872,19 @@ int main()
     {
         for (j = i + 1; j < 7; j++)
         {
-            printf("<%s> et <%s> se connaissent: %s\n",
-                   tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            // printf("<%s> et <%s> se connaissent: %s\n",
+            //        tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
             printf("<%s> et <%s> se connaissent tres probablement: %s\n",
                    tabe[i], tabe[j], se_connaissent_proba(r, tabe[i], tabe[j]) ? "vrai" : "faux");
-            printf("<%s> et <%s> se connaissent peut etre: %s\n",
-                   tabe[i], tabe[j], se_connaissent_peutetre(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            // printf("<%s> et <%s> se connaissent peut etre: %s\n",
+            //        tabe[i], tabe[j], se_connaissent_peutetre(r, tabe[i], tabe[j]) ? "vrai" : "faux");
         }
         printf("\n");
     }
 
     affiche_degre_relations(r, tabe[3]);
 
-    // relationFree(&r);
+    relationFree(&r);
 
     printf("\nPRESS RETURN\n");
     char buff[64];
