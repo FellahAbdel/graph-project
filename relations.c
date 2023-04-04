@@ -636,8 +636,8 @@ bool se_connaissent(Relations g, char *x, char *y)
         Arc arc = (Arc)arcNodeFound->val;
         rtype type = arc->t;
         bool estParenteOk = est_lien_parente(type);
-        bool estConaissanceOk = est_lien_parente(type);
-        bool estProfessionelOk = est_lien_parente(type);
+        bool estConaissanceOk = est_lien_connaissance(type);
+        bool estProfessionelOk = est_lien_professionel(type);
         isRelationship = estParenteOk || estConaissanceOk || estProfessionelOk;
     }
     else
@@ -652,6 +652,7 @@ bool se_connaissent(Relations g, char *x, char *y)
             {
                 isRelationship = true;
             }
+            commonNeighbours = commonNeighbours->suiv;
         }
     }
 
@@ -759,7 +760,13 @@ int main()
     {
         printf("non\n");
     }
-    // Arc arc = (Arc)listeOfArcs->val;
+
+    // Test de la fonction se connaissent.
+    printf("%s se connait avec %s : %s\n", tabe[0], tabe[1], se_connaissent(r, tabe[0], tabe[1]) ? "true" : "false");
+    printf("%s se connait avec %s : %s\n", tabe[0], tabe[2], se_connaissent(r, tabe[0], tabe[2]) ? "true" : "false");
+    printf("%s se connait avec %s : %s\n", tabe[2], tabe[3], se_connaissent(r, tabe[2], tabe[3]) ? "true" : "false");
+    // printf("%s se connait avec %s : %s", tabe[1], tabe[5], se_connaissent(r, tabe[1], tabe[5]) ? "true" : "false");
+    // // Arc arc = (Arc)listeOfArcs->val;
     // printf("%s", ((Entite)arc->x)->nom);
     relationFree(&r);
     return 0;
