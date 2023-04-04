@@ -752,46 +752,40 @@ void affichelg(listeg l, void (*aff)(void *))
 
 void afficheEntite(void *x)
 {
+    Entite e = (Entite)x;
+    printf("%s : ", e->nom);
+    switch (e->ident)
+    {
+    case PERSONNE:
+        printf("PERSONNE");
+        break;
+    case OBJET:
+        printf("OBJET");
+        break;
+    case ADRESSE:
+        printf("ADRESSE");
+        break;
+    case VILLE:
+        printf("VILLE");
+        break;
+    default:
+        printf("Type d'entité inconnu");
+    }
+    printf("\n");
 }
+
 void afficheArc(void *x)
 {
+    Arc a = (Arc)x;
+    printf("-- %s -->", toString(a->t));
+    void *entite = a->x;
+    afficheEntite(entite);
 }
 
 ////////////////////////////////////////
 // Exercice 6: Parcours
 void affiche_degre_relations(Relations r, char *x)
 {
-}
-
-void afficheEntiteR(void *x)
-{
-    Entite e = (Entite)x;
-    printf("%s : ", e->nom);
-    switch (e->ident)
-    {
-    case PERSONNE:
-        printf("PERSONNE\n");
-        break;
-    case OBJET:
-        printf("OBJET\n");
-        break;
-    case ADRESSE:
-        printf("ADRESSE\n");
-        break;
-    case VILLE:
-        printf("VILLE\n");
-        break;
-    default:
-        printf("Type d'entité inconnu\n");
-    }
-}
-
-void afficheArcR(void *x)
-{
-    Arc a = (Arc)x;
-    printf("-- %s -->", toString(a->t));
-    void *entite = a->x;
-    afficheEntite(entite);
 }
 
 int main()
@@ -873,7 +867,7 @@ int main()
 
     // explorer les relations
     printf("%s est en relation avec:\n", tabe[0]);
-    affichelg(en_relation(r, tabe[0]), afficheArcR);
+    affichelg(en_relation(r, tabe[0]), afficheArc);
     printf("\n");
 
     for (i = 0; i < 7; i++)
@@ -881,7 +875,7 @@ int main()
         {
             printf("<%s> et <%s> ont les relations communes:\n", tabe[i], tabe[j]);
             listeg ch = chemin2(r, tabe[i], tabe[j]);
-            affichelg(ch, afficheEntiteR);
+            affichelg(ch, afficheEntite);
             printf("\n");
             detruire(ch);
         }
@@ -899,8 +893,8 @@ int main()
     {
         for (j = i + 1; j < 7; j++)
         {
-            // printf("<%s> et <%s> se connaissent: %s\n",
-            //        tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            printf("<%s> et <%s> se connaissent: %s\n",
+                   tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
             printf("<%s> et <%s> se connaissent tres probablement: %s\n",
                    tabe[i], tabe[j], se_connaissent_proba(r, tabe[i], tabe[j]) ? "vrai" : "faux");
             printf("<%s> et <%s> se connaissent peut etre: %s\n",
