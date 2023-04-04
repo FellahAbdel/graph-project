@@ -822,14 +822,14 @@ int main()
     // affichelg(chemin2(r, tabe[6], tabe[1]), afficheEntiteR);
     // return 0;
 
-    if (ont_lien_parente(r, tabe[0], tabe[2]))
-    {
-        printf("oui\n");
-    }
-    else
-    {
-        printf("non\n");
-    }
+    // if (ont_lien_parente(r, tabe[0], tabe[2]))
+    // {
+    //     printf("oui\n");
+    // }
+    // else
+    // {
+    //     printf("non\n");
+    // }
 
     // Test de la fonction se connaissent.
     // printf("%s se connait avec %s : %s\n", tabe[0], tabe[1], se_connaissent(r, tabe[0], tabe[1]) ? "true" : "false");
@@ -837,11 +837,11 @@ int main()
     // printf("%s se connait avec %s : %s\n", tabe[2], tabe[3], se_connaissent(r, tabe[2], tabe[3]) ? "true" : "false");
     // printf("%s se connait avec %s : %s\n", tabe[1], tabe[5], se_connaissent(r, tabe[1], tabe[5]) ? "true" : "false");
     // printf("%s se connait avec %s : %s\n", tabe[0], tabe[5], se_connaissent(r, tabe[0], tabe[5]) ? "true" : "false");
-    char *chloe = tabe[3];
-    char *gildas = tabe[4];
+    // char *chloe = tabe[3];
+    // char *gildas = tabe[4];
 
-    printf("%s se connait avec %s : %s\n", chloe, gildas, se_connaissent(r, chloe, gildas) ? "true" : "false");
-    return 0;
+    // printf("%s se connait avec %s : %s\n", chloe, gildas, se_connaissent(r, chloe, gildas) ? "true" : "false");
+    // return 0;
     // // Arc arc = (Arc)listeOfArcs->val;
     // printf("%s", ((Entite)arc->x)->nom);
     // relationFree(&r);
@@ -872,10 +872,10 @@ int main()
     {
         for (j = i + 1; j < 7; j++)
         {
-            // printf("<%s> et <%s> se connaissent: %s\n",
-            //        tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
-            printf("<%s> et <%s> se connaissent tres probablement: %s\n",
-                   tabe[i], tabe[j], se_connaissent_proba(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            printf("<%s> et <%s> se connaissent: %s\n",
+                   tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            // printf("<%s> et <%s> se connaissent tres probablement: %s\n",
+            //        tabe[i], tabe[j], se_connaissent_proba(r, tabe[i], tabe[j]) ? "vrai" : "faux");
             // printf("<%s> et <%s> se connaissent peut etre: %s\n",
             //        tabe[i], tabe[j], se_connaissent_peutetre(r, tabe[i], tabe[j]) ? "vrai" : "faux");
         }
