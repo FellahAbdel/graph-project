@@ -709,9 +709,28 @@ bool se_connaissent_proba(Relations g, char *x, char *y)
 // PRE CONDITION: strcmp(x,y)!=0
 bool se_connaissent_peutetre(Relations g, char *x, char *y)
 {
-    return false;
+    if (_isRelationDirecte(g, x, y))
+    {
+        return false;
+    }
+    else if (se_connaissent_proba(g, x, y))
+    {
+        return false;
+    }
+    else
+    {
+        listeg commonNeighbours = chemin2(g, x, y);
+        if (commonNeighbours != NULL)
+        {
+            detruire(commonNeighbours);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
-
 ////////////////////////////////////////
 // Exercice 5: Affichages
 void affiche(void *objet)
@@ -880,12 +899,12 @@ int main()
     {
         for (j = i + 1; j < 7; j++)
         {
-            printf("<%s> et <%s> se connaissent: %s\n",
-                   tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            // printf("<%s> et <%s> se connaissent: %s\n",
+            //        tabe[i], tabe[j], se_connaissent(r, tabe[i], tabe[j]) ? "vrai" : "faux");
             printf("<%s> et <%s> se connaissent tres probablement: %s\n",
                    tabe[i], tabe[j], se_connaissent_proba(r, tabe[i], tabe[j]) ? "vrai" : "faux");
-            // printf("<%s> et <%s> se connaissent peut etre: %s\n",
-            //        tabe[i], tabe[j], se_connaissent_peutetre(r, tabe[i], tabe[j]) ? "vrai" : "faux");
+            printf("<%s> et <%s> se connaissent peut etre: %s\n",
+                   tabe[i], tabe[j], se_connaissent_peutetre(r, tabe[i], tabe[j]) ? "vrai" : "faux");
         }
         printf("\n");
     }
