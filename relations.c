@@ -550,11 +550,6 @@ void adjEntite(Relations g, char *nom, etype t)
         //* du même nom
         //* si non, on l'ajoute.
         //* si oui, on l'ajoute pas.
-        // if (!searchSommet(g, nom))
-        // {
-        //     //* On a pas trouvé l'entité, on l'ajoute.
-        //     g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
-        // }
         if (rech(g->liste, (char *)nom, compSommet) == NULL)
         {
             g->liste = adjqueue(g->liste, (Sommet)sommetToAdd);
