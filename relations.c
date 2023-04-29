@@ -561,45 +561,6 @@ void adjEntite(Relations g, char *nom, etype t)
     free(entityToAdd);
 }
 
-void afficheEntites(Relations g)
-{
-    if (g == NULL)
-    {
-        return;
-    }
-
-    listeg curr = g->liste;
-    if (curr == NULL)
-    {
-        printf("Graphe Vide.\n");
-        return;
-    }
-
-    int i = 0;
-    while (curr != NULL)
-    {
-        // printf("%d => %p\n", i, curr);
-        Sommet som = (Sommet)curr->val;
-        Entite entity = (Entite)som->x;
-        printf("%s\n", entity->nom);
-        printf("En rélation avec : \n");
-        listeg listeConnaissance = som->larcs;
-        printf("%p\n", listeConnaissance);
-        while (listeConnaissance != NULL)
-        {
-            Arc arc = (Arc)listeConnaissance->val;
-            Entite entity = (Entite)(arc->x);
-            printf("   %s\n", toString(arc->t));
-            printf("   %s\n", entity->nom);
-            printf("   %p\n", entity);
-            printf("--------------------\n");
-            listeConnaissance = listeConnaissance->suiv;
-        }
-        curr = curr->suiv;
-        i++;
-    }
-}
-
 /**
  * listeArcs : liste des arcs du sommet.
  * nom : clé.
