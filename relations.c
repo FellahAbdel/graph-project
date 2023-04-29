@@ -854,54 +854,55 @@ void afficheArc(void *x)
 // Exercice 6: Parcours
 void affiche_degre_relations(Relations r, char *x)
 {
-    listeg listeVisites = listegnouv();
-    listeg fileSuivants = listegnouv();
-    listeg fileSuivants2 = listegnouv();
+    listeg visitedList = listegnouv();
+    listeg queueNext = listegnouv();
+    listeg queueSecondNext = listegnouv();
     listeg relations = en_relation(r, x);
     listeg sommetX = rech(r->liste, x, compSommet);
-    listeVisites = adjtete(listeVisites, ((Sommet)sommetX->val)->x);
+    visitedList = adjtete(visitedList, ((Sommet)sommetX->val)->x);
     detruire(sommetX);
     for (; !estVide(relations); relations = relations->suiv)
     {
-        fileSuivants = adjqueue(fileSuivants, ((Arc)relations->val)->x);
+        queueNext = adjqueue(queueNext, ((Arc)relations->val)->x);
     }
     printf("%s\n", x);
     int degre = 1;
-    while (!estVide(fileSuivants))
+    while (!estVide(queueNext))
     {
         printf("-- %d\n", degre++);
-        listeg fileSuivantsIter = fileSuivants;
-        for (; !estVide(fileSuivantsIter); fileSuivantsIter = fileSuivantsIter->suiv)
+        listeg queueNextTemp = queueNext;
+        for (; !estVide(queueNextTemp); queueNextTemp = queueNextTemp->suiv)
         {
-            printf("%s\n", ((Entite)fileSuivantsIter->val)->nom);
+            printf("%s\n", ((Entite)queueNextTemp->val)->nom);
         }
-        while (!estVide(fileSuivants))
+        while (!estVide(queueNext))
         {
-            char *suivant = ((Entite)tete(fileSuivants))->nom;
-            fileSuivants = suptete(fileSuivants);
-            listeg relations = en_relation(r, suivant);
+            char *next = ((Entite)tete(queueNext))->nom;
+            queueNext = suptete(queueNext);
+            listeg relations = en_relation(r, next);
             for (; !estVide(relations); relations = relations->suiv)
             {
-                listeg comparaisonVisites = rech(listeVisites, ((Arc)relations->val)->x->nom, compEntite);
-                listeg comparaisonFile = rech(fileSuivants, ((Arc)relations->val)->x->nom, compEntite);
-                listeg comparaisonFile2 = rech(fileSuivants2, ((Arc)relations->val)->x->nom, compEntite);
-                if (estVide(comparaisonVisites) && estVide(comparaisonFile) && estVide(comparaisonFile2))
+                listeg visitedComparison = rech(visitedList, ((Arc)relations->val)->x->nom, compEntite);
+                listeg queueComparison = rech(queueNext, ((Arc)relations->val)->x->nom, compEntite);
+                listeg queueSecondComparison = rech(queueSecondNext, ((Arc)relations->val)->x->nom, compEntite);
+                if (estVide(visitedComparison) && estVide(queueComparison) && estVide(queueSecondComparison))
                 {
                     listeg sommetFils = rech(r->liste, ((Arc)relations->val)->x->nom, compSommet);
-                    fileSuivants2 = adjqueue(fileSuivants2, ((Sommet)sommetFils->val)->x);
+                    queueSecondNext = adjqueue(queueSecondNext, ((Sommet)sommetFils->val)->x);
                     detruire(sommetFils);
                 }
-                detruire(comparaisonVisites);
-                detruire(comparaisonFile);
+                detruire(visitedComparison);
+                detruire(queueComparison);
             }
-            listeg sommetSuivant = rech(r->liste, suivant, compSommet);
-            listeVisites = adjtete(listeVisites, ((Sommet)sommetSuivant->val)->x);
-            detruire(sommetSuivant);
+            listeg nextSom = rech(r->liste, next, compSommet);
+            visitedList = adjtete(visitedList, ((Sommet)nextSom->val)->x);
+            detruire(nextSom);
         }
-        fileSuivants = fileSuivants2;
-        fileSuivants2 = listegnouv();
+
+        queueNext = queueSecondNext;
+        queueSecondNext = listegnouv();
     }
-    detruire(listeVisites);
+    detruire(visitedList);
 }
 
 int main()
