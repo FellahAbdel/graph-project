@@ -533,18 +533,6 @@ int compArc(void *a, void *string)
     return strcmp(arc->x->nom, (char *)string);
 }
 
-listeg searchSommet(listeg liste, char *nom)
-{
-    //* Tanque la liste n'est pas vide et que les deux sommets sont pas les mêmes
-    //* on part au suivant.
-    listeg listetemp = liste;
-    while (listetemp != NULL && compSommet((Sommet)listetemp->val, (char *)nom) != 0)
-    {
-        listetemp = listetemp->suiv;
-    }
-
-    return listetemp;
-}
 // 3.4 ajout d'entites et de relations
 void adjEntite(Relations g, char *nom, etype t)
 {
