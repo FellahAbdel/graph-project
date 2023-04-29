@@ -907,24 +907,17 @@ void affiche_degre_relations(Relations r, char *x)
 
 int main()
 {
-
-    // return 1;
     int i, j;
     Relations r;
     relationInit(&r);
-
     // ajouter les entites de l'exemple
     char *tabe[] = {"KARL", "LUDOVIC", "CELINE", "CHLOE", "GILDAS", "CEDRIC", "SEVERINE",
                     "PEUGEOT 106", "1, RUE DE LA RUE", "STRASBOURG"};
-    //* On ajoute les personnes.
     for (i = 0; i < 7; i++)
         adjEntite(r, tabe[i], PERSONNE);
-
-    //* On ajoute les objets.
     adjEntite(r, tabe[7], OBJET);
     adjEntite(r, tabe[8], ADRESSE);
     adjEntite(r, tabe[9], VILLE);
-
     // ajouter les relations de l'exemple
     adjRelation(r, tabe[0], tabe[1], FRERE);
     adjRelation(r, tabe[0], tabe[2], AMI);
@@ -937,8 +930,6 @@ int main()
     adjRelation(r, tabe[5], tabe[8], LOCATAIRE);
     adjRelation(r, tabe[7], tabe[8], DECOUVERT);
     adjRelation(r, tabe[8], tabe[9], SITUE);
-
-    // afficheEntites(r);
 
     // explorer les relations
     printf("%s est en relation avec:\n", tabe[0]);
@@ -962,7 +953,6 @@ int main()
             printf("<%s> et <%s> ont lien de parente: %s\n",
                    tabe[i], tabe[j], ont_lien_parente(r, tabe[i], tabe[j]) ? "vrai" : "faux");
         }
-
     printf("\n");
     for (i = 0; i < 7; i++)
     {
@@ -979,8 +969,9 @@ int main()
     }
 
     affiche_degre_relations(r, tabe[3]);
+
     relationFree(&r);
-    return 0;
+
     printf("\nPRESS RETURN\n");
     char buff[64];
     fscanf(stdin, "%s", buff);
