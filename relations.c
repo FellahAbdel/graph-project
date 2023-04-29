@@ -820,9 +820,9 @@ void affichelg(listeg l, void (*aff)(void *))
 
 void afficheEntite(void *x)
 {
-    Entite e = (Entite)x;
-    printf("%s : ", e->nom);
-    switch (e->ident)
+    Entite entity = (Entite)x;
+    printf("%s : ", entity->nom);
+    switch (entity->ident)
     {
     case PERSONNE:
         printf("PERSONNE");
