@@ -10,43 +10,60 @@ typedef int bool;
 #include "stdio.h"
 #include "string.h"
 
-////////////////////////////////////////
-// Exercice 1: Classement des Relations
-
+/**
+ * @enum rtype
+ * Définit un type relationnel.
+ */
 typedef enum
 {
-    FRERE = 2,
-    COUSIN,
-    PARENT,
-    ONCLE,
-    EPOUX,
-    AMI,
-    VIT,
-    CONNAIT,
-    CHEF,
-    COLLEGUE,
-    LOCATAIRE,
-    TRAVAILLE,
-    PROPRIETAIRE,
-    SITUE,
-    DECOUVERT
+    FRERE = 2,    ///<  Frere
+    COUSIN,       ///<  Cousin
+    PARENT,       ///<  Parent
+    ONCLE,        ///<  Oncle
+    EPOUX,        ///<  Epoux
+    AMI,          ///<  Ami
+    VIT,          ///<  Vit
+    CONNAIT,      ///<  Connait
+    CHEF,         ///<  Chef
+    COLLEGUE,     ///<  Collegue
+    LOCATAIRE,    ///<  Locataire
+    TRAVAILLE,    ///<  Travaille
+    PROPRIETAIRE, ///<  Proprietaire
+    SITUE,        ///<  Situe
+    DECOUVERT     ///<  Decouvert
 } rtype;
 
+/**
+ * @param id : un type relationnel.
+ * @return true si ce type est un lien de parenté sinon faux.
+ */
 bool est_lien_parente(rtype id)
 {
     return id >= FRERE && id <= EPOUX;
 }
 
+/**
+ * @param id : un type relationnel.
+ * @return true si ce type est un lien professionel sinon faux.
+ */
 bool est_lien_professionel(rtype id)
 {
     return id >= CHEF && id <= COLLEGUE;
 }
 
+/**
+ * @param id : un type relationnel.
+ * @return true si ce type est un lien de connaissance sinon faux.
+ */
 bool est_lien_connaissance(rtype id)
 {
     return id >= AMI && id <= CONNAIT;
 }
 
+/**
+ * @param id : un type relationnel.
+ * @return la chaine de caractère associée au type relationnel id.
+ */
 char *toString(rtype id)
 {
     //* id = 0 => omega : NULL
@@ -62,15 +79,29 @@ char *toString(rtype id)
 
 ////////////////////////////////////////
 // Exercice 2: Liste de pointeurs
-
+/**
+ * @struct s_node
+ * @brief Cette structure permet de définir un noeud.
+ */
 typedef struct s_node
 {
     void *val; // pointeur vers objet quelconque
     struct s_node *suiv;
 } *listeg;
 
+/**
+ * @param Aucun.
+ * @brief Création d'une nouvelle liste.
+ * @return Un pointeur NULL.
+ */
 listeg listegnouv() { return NULL; }
 
+/**
+ * @param lst : Une liste.
+ * @param x : Un pointeur générique.
+ * @brief Adjonction d'un élément en tête dans la liste.
+ * @return Une nouvelle liste.
+ */
 listeg adjtete(listeg lst, void *x)
 {
     //* Création du nouveau noeud
@@ -89,6 +120,12 @@ listeg adjtete(listeg lst, void *x)
     return newNode;
 }
 
+/**
+ * @param lst : Une liste.
+ * @param x : Un pointeur générique.
+ * @brief Adjonction d'un élément en queue dans la liste.
+ * @return Une nouvelle liste.
+ */
 listeg adjqueue(listeg lst, void *x)
 {
     //* Création du nouveau noeud
@@ -125,6 +162,11 @@ listeg adjqueue(listeg lst, void *x)
     return lst;
 }
 
+/**
+ * @param lst : Une liste.
+ * @brief Suppression en tête.
+ * @return Une nouvelle liste.
+ */
 listeg suptete(listeg lst)
 {
     if (lst == NULL)
@@ -142,21 +184,41 @@ listeg suptete(listeg lst)
     return lst;
 }
 
+/**
+ * @param lst : Une liste.
+ * @brief L'élement en tête de la liste.
+ * @return Le pointeur générique en tête de la liste.
+ */
 void *tete(listeg lst)
 {
     return lst != NULL ? lst->val : NULL;
 }
 
+/**
+ * @param lst : Une liste.
+ * @brief Est-ce que la liste est vide?
+ * @return true si oui sinon false.
+ */
 bool estVide(listeg lst)
 {
     return lst == NULL;
 }
 
+/**
+ * @param lst : Une liste.
+ * @brief La longueur de la liste.
+ * @return Un entier representant la longeur.
+ */
 int longueur(listeg lst)
 {
     return estVide(lst) ? 0 : 1 + longueur(lst->suiv);
 }
 
+/**
+ * @param lst : Une liste.
+ * @brief Destruction de la liste.
+ * @return rien.
+ */
 void detruire(listeg lst)
 {
     listeg temp = lst;
@@ -166,6 +228,12 @@ void detruire(listeg lst)
     }
 }
 
+/**
+ * @param objet1 : Un pointeur générique.
+ * @param objet2 : Un pointeur générique.
+ * @brief Comparaison lexicographique des deux objets.
+ * @return Un entier representant la longeur.
+ */
 int cmp(void *objet1, void *objet2)
 {
     return strcmp((char *)objet1, (char *)objet2);
@@ -786,6 +854,54 @@ void afficheArc(void *x)
 // Exercice 6: Parcours
 void affiche_degre_relations(Relations r, char *x)
 {
+    listeg listeVisites = listegnouv();
+    listeg fileSuivants = listegnouv();
+    listeg fileSuivants2 = listegnouv();
+    listeg relations = en_relation(r, x);
+    listeg sommetX = rech(r->liste, x, compSommet);
+    listeVisites = adjtete(listeVisites, ((Sommet)sommetX->val)->x);
+    detruire(sommetX);
+    for (; !estVide(relations); relations = relations->suiv)
+    {
+        fileSuivants = adjqueue(fileSuivants, ((Arc)relations->val)->x);
+    }
+    printf("%s\n", x);
+    int degre = 1;
+    while (!estVide(fileSuivants))
+    {
+        printf("-- %d\n", degre++);
+        listeg fileSuivantsIter = fileSuivants;
+        for (; !estVide(fileSuivantsIter); fileSuivantsIter = fileSuivantsIter->suiv)
+        {
+            printf("%s\n", ((Entite)fileSuivantsIter->val)->nom);
+        }
+        while (!estVide(fileSuivants))
+        {
+            char *suivant = ((Entite)tete(fileSuivants))->nom;
+            fileSuivants = suptete(fileSuivants);
+            listeg relations = en_relation(r, suivant);
+            for (; !estVide(relations); relations = relations->suiv)
+            {
+                listeg comparaisonVisites = rech(listeVisites, ((Arc)relations->val)->x->nom, compEntite);
+                listeg comparaisonFile = rech(fileSuivants, ((Arc)relations->val)->x->nom, compEntite);
+                listeg comparaisonFile2 = rech(fileSuivants2, ((Arc)relations->val)->x->nom, compEntite);
+                if (estVide(comparaisonVisites) && estVide(comparaisonFile) && estVide(comparaisonFile2))
+                {
+                    listeg sommetFils = rech(r->liste, ((Arc)relations->val)->x->nom, compSommet);
+                    fileSuivants2 = adjqueue(fileSuivants2, ((Sommet)sommetFils->val)->x);
+                    detruire(sommetFils);
+                }
+                detruire(comparaisonVisites);
+                detruire(comparaisonFile);
+            }
+            listeg sommetSuivant = rech(r->liste, suivant, compSommet);
+            listeVisites = adjtete(listeVisites, ((Sommet)sommetSuivant->val)->x);
+            detruire(sommetSuivant);
+        }
+        fileSuivants = fileSuivants2;
+        fileSuivants2 = listegnouv();
+    }
+    detruire(listeVisites);
 }
 
 int main()
@@ -903,12 +1019,9 @@ int main()
         printf("\n");
     }
 
+    affiche_degre_relations(r, tabe[3]);
     relationFree(&r);
     return 0;
-    affiche_degre_relations(r, tabe[3]);
-
-    relationFree(&r);
-
     printf("\nPRESS RETURN\n");
     char buff[64];
     fscanf(stdin, "%s", buff);
