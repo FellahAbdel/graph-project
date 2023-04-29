@@ -239,6 +239,12 @@ int cmp(void *objet1, void *objet2)
     return strcmp((char *)objet1, (char *)objet2);
 }
 
+/**
+ * @param lst : Une liste.
+ * @param x : Un pointeur générique.
+ * @param comp : Un pointeur de fonction.
+ * @return Retourne une nouvelle liste avec pour tête le premier élément trouvé.
+ */
 listeg rech(listeg lst, void *x, int (*comp)(void *, void *))
 {
     //* objectsFound : contiendra tous les noeuds trouvés.
@@ -262,40 +268,63 @@ listeg rech(listeg lst, void *x, int (*comp)(void *, void *))
 // Exercice 3: Construction du graphe
 
 #define LONG_NOM_MAX 64
+
+/**
+ * @enum etype
+ * Définit un type d'objet.
+ */
 typedef enum
 {
-    PERSONNE = 1,
-    OBJET,
-    ADRESSE,
-    VILLE
+    PERSONNE = 1, ///< Personne
+    OBJET,        ///<  Objet
+    ADRESSE,      ///< Adresse
+    VILLE         ///<  Ville
 } etype;
 
+/**
+ * @struct s_entite
+ * @brief Cette structure permet de définir une entité.
+ */
 typedef struct s_entite
 {
     char nom[LONG_NOM_MAX]; // le nom de l�entit� p.ex � Peugeot 106 �
     etype ident;            // l�identifiant associ�, p.ex OBJET
 } *Entite;
 // 3.1 les structures de donn�es
+
+/**
+ * @struct s_sommet
+ * @brief Cette structure permet de définir un sommet.
+ */
 typedef struct s_sommet
 {
-    // A DEFINIR
     listeg larcs;
     Entite x;
 } *Sommet;
 
+/**
+ * @struct s_node
+ * @brief Cette structure permet de définir un arc.
+ */
 typedef struct s_arc
 {
-    // A DEFINIR
     rtype t;
     Entite x;
 } *Arc;
 
+/**
+ * @struct s_relations
+ * @brief Cette structure permet de définir l'ensemble des relations.
+ */
 typedef struct s_relations
 {
-    // A DEFINIR
     listeg liste;
 } *Relations;
 
+/**
+ * @param objet : un pointeur génerique
+ * @brief Vérifie juste si l'allocation a bien fonctionné.
+ */
 void checkMalloc(void *objet)
 {
     if (objet == NULL)
@@ -306,6 +335,12 @@ void checkMalloc(void *objet)
 }
 
 // 3.2 les constructeurs
+/**
+ * @param s chaîne de caractère;
+ * @param e le type de l'objet.
+ * @brief Construction d'une entité.
+ * @return une entité.
+ */
 Entite creerEntite(char *s, etype e)
 {
     Entite newEntity = (Entite)malloc(sizeof(struct s_entite));
@@ -318,6 +353,11 @@ Entite creerEntite(char *s, etype e)
     return newEntity;
 }
 
+/**
+ * @param e Une entité
+ * @brief Construction d'un sommet.
+ * @return Un sommet.
+ */
 Sommet nouvSommet(Entite e)
 {
     Sommet newSommet = (Sommet)malloc(sizeof(struct s_sommet));
@@ -335,6 +375,12 @@ Sommet nouvSommet(Entite e)
     return newSommet;
 }
 
+/**
+ * @param e Une entité.
+ * @param type le type de la relation.
+ * @brief Construction d'un arc.
+ * @return Un arc.
+ */
 Arc nouvArc(Entite e, rtype type)
 {
     Arc newArc = (Arc)malloc(sizeof(struct s_arc));
@@ -351,6 +397,11 @@ Arc nouvArc(Entite e, rtype type)
     return newArc;
 }
 
+/**
+ * @param g Pointeur de pointeur vers la relation
+ * @brief Initialisation du graphe.
+ * @return Rien.
+ */
 void relationInit(Relations *g)
 {
     *g = (Relations)malloc(sizeof(struct s_relations));
@@ -360,14 +411,17 @@ void relationInit(Relations *g)
     (*g)->liste = listegnouv();
 }
 
+/**
+ * @param ptrListeOfArcs Un pointeur vers la liste des arcs;
+ * @brief Nettoyage d'une liste d'arcs.
+ * @return rien.
+ */
 void freeLarcs(listeg *ptrlisteOfArcs)
 {
     if (estVide(*ptrlisteOfArcs))
     {
         return;
     }
-    // listeg curr = *ptrlisteOfArcs;
-
     //* Destruction : mais avant on a bésoin de supprimer l'entité
     //* Dans l'arc, c'est pourquoi on ne peut pas utiliser la fonction
     //* detruire() ici.
@@ -384,6 +438,11 @@ void freeLarcs(listeg *ptrlisteOfArcs)
     }
 }
 
+/**
+ * @param ptrSommet Un pointeur vers le sommet à supprimer;
+ * @brief Supression d'un sommet.
+ * @return rien.
+ */
 void freeSommet(Sommet *ptrSommet)
 {
     if (*ptrSommet == NULL)
@@ -398,6 +457,11 @@ void freeSommet(Sommet *ptrSommet)
     free(*ptrSommet);
 }
 
+/**
+ * @param g Un pointeur vers le graphe;
+ * @brief Suppression de tout le graphe.
+ * @return rien.
+ */
 void relationFree(Relations *g)
 {
     if (*g == NULL)
@@ -430,6 +494,12 @@ void relationFree(Relations *g)
 }
 
 // 3.3 les comparaisons
+/**
+ * @param e Un pointeur générique vers un objet;
+ * @param string Un pointeur générique vers une chaine;
+ * @brief Comparaison d'entité.
+ * @return booleen.
+ */
 int compEntite(void *e, void *string)
 {
     Entite entity = (Entite)e;
@@ -438,8 +508,10 @@ int compEntite(void *e, void *string)
 }
 
 /**
- * s : est un sommet.
- * string : est un nom.
+ * @param s Un pointeur générique vers un sommet;
+ * @param string Un pointeur générique vers une chaine;
+ * @brief Comparaison de sommet.
+ * @return booleen.
  */
 int compSommet(void *s, void *string)
 {
@@ -448,6 +520,12 @@ int compSommet(void *s, void *string)
     return strcmp(som->x->nom, (char *)string);
 }
 
+/**
+ * @param a Un pointeur générique vers un arc;
+ * @param string Un pointeur générique vers une chaine;
+ * @brief Comparaison d'arc.
+ * @return booleen.
+ */
 int compArc(void *a, void *string)
 {
     Arc arc = (Arc)a;
