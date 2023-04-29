@@ -562,9 +562,9 @@ void adjEntite(Relations g, char *nom, etype t)
 }
 
 /**
- * listeArcs : liste des arcs du sommet.
- * nom : clé.
- * Return NULL ou l'arc trouvé.
+ * @param listeArcs  liste des arcs du sommet.
+ * @param nom clé.
+ * @return NULL ou l'arc trouvé.
  */
 listeg searchArc(listeg listeArcs, char *nom)
 {
@@ -576,13 +576,18 @@ listeg searchArc(listeg listeArcs, char *nom)
     return listeArcs;
 }
 
-// PRE CONDITION: id doit �tre coh�rent avec les types des sommets correspondants � x et y
-//                p.ex si x est de type OBJET, id ne peut pas etre une relation de parente
-// PRE CONDITION: strcmp(nom1,nom2)!=0
+/**
+ *    @brief Adjonction des relations.
+ *    @param g le graphe
+ *    @param nom1 clé 1
+ *    @param nom2 clé 2
+ *    @param id type rélationnel.
+ *    @pre id doit être cohérent avec les types des sommets correspondants à nom1 et nom2, par exemple si nom1 est de type OBJET, id ne peut pas être une relation de parenté.
+ *    @pre nom1 et nom2 doivent être des clés distinctes.
+ */
 void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
 {
     //* Les sommets sont déjà ajoutés, ici on ajoute juste les arcs (relations).
-
     //* On cherche le sommet portant le nom : nom1
     listeg curr = g->liste;
     Sommet s1 = NULL;
@@ -644,6 +649,16 @@ void adjRelation(Relations g, char *nom1, char *nom2, rtype id)
 // Exercice 4: Explorer les relations entre personnes
 
 // 4.1 listes de relations
+/**
+    @brief Renvoie la liste des arcs adjacents au sommet de nom x dans le graphe g.
+    @param g Le graphe.
+    @param x Le nom du sommet dont on cherche les arcs adjacents.
+    @return La liste des arcs adjacents au sommet de nom x, ou NULL si le sommet n'existe pas dans le graphe.
+    Cette fonction parcourt la liste de sommets du graphe g pour trouver le sommet de nom x. Si le sommet est trouvé,
+    la fonction retourne la liste des arcs adjacents à ce sommet. Si le sommet n'existe pas dans le graphe, la fonction
+    retourne NULL.
+    La liste retournée doit être détruite après utilisation en appelant la fonction detruire(listeg liste).
+    */
 listeg en_relation(Relations g, char *x)
 {
     listeg listSommet = g->liste;
@@ -664,6 +679,15 @@ listeg en_relation(Relations g, char *x)
     return listeOfArcs;
 }
 
+/**
+    @param g le graphe
+    @param x nom du premier sommet
+    @param y nom du deuxième sommet
+    @return une liste de sommets qui constitue un chemin entre x et y, ou NULL si x et y ne sont pas reliés dans le graphe.
+    La fonction cherche un chemin entre deux sommets x et y dans le graphe en utilisant la méthode de recherche en largeur.
+    Elle retourne une liste de sommets qui constitue un chemin entre x et y si un chemin est trouvé, ou NULL sinon.
+    Cette fonction utilise la fonction en_relation pour récupérer la liste des arcs sortants de chaque sommet, puis elle cherche si l'un des arcs sortants du premier sommet est connecté à l'un des arcs entrants du deuxième sommet.
+    */
 listeg chemin2(Relations g, char *x, char *y)
 {
     listeg listOfArcsX = en_relation(g, x);
@@ -694,7 +718,15 @@ listeg chemin2(Relations g, char *x, char *y)
 }
 
 // 4.2 verifier un lien de parente
-// PRE CONDITION: strcmp(x,y)!=0
+/**
+    @brief Vérifie si deux entités ont un lien de parenté direct.
+    @param g Le graphe contenant les entités.
+    @param x Le nom de la première entité.
+    @param y Le nom de la deuxième entité.
+    @return true si une relation de parenté existe entre x et y, false sinon.
+    @pre g doit être initialisé et non NULL.
+    @pre x et y doivent correspondre à des noms d'entités existantes dans g.
+*/
 bool ont_lien_parente(Relations g, char *x, char *y)
 {
     listeg listOfArcs = en_relation(g, x);
@@ -710,8 +742,17 @@ bool ont_lien_parente(Relations g, char *x, char *y)
     return isFamily;
 }
 // 4.3 tester connaissances
-// PRE CONDITION: les sommets correspondants � x et y sont de type PERSONNE
-// PRE CONDITION: strcmp(x,y)!=0
+
+/**
+    @param g le graphe
+    @param x le nom du premier sommet
+    @param y le nom du deuxième sommet
+    @pre Les sommets correspondants à x et y sont de type PERSONNE.
+    @pre x et y sont différents.
+    @return true si x et y ont une relation de parenté, de connaissance ou professionnelle,
+    ou s'ils ont un chemin commun passant par un sommet de relation de parenté avec x et y.
+    Sinon, retourne false.
+*/
 bool se_connaissent(Relations g, char *x, char *y)
 {
     //* On recupère la liste des rélations de x.
@@ -751,6 +792,16 @@ bool se_connaissent(Relations g, char *x, char *y)
     return isRelationship;
 }
 
+/**
+ *  @brief Vérifie si une relation directe existe entre deux sommets d'un graphe de relations.
+ *  @param g le graphe de relations
+ *  @param x le nom du premier sommet
+ *  @param y le nom du deuxième sommet
+ *  @return true si une relation directe existe entre x et y, false sinon.
+ *  @pre Les sommets correspondants à x et y doivent appartenir au graphe et être de type Entite.
+ *  @pre strcmp(x,y) != 0
+ *  @post Retourne true si une relation directe existe entre x et y, false sinon.
+ */
 bool _isRelationDirecte(Relations g, char *x, char *y)
 {
     listeg listOfArcsX = en_relation(g, x);
@@ -766,8 +817,15 @@ bool _isRelationDirecte(Relations g, char *x, char *y)
 
     return isDirectRelationship;
 }
-// PRE CONDITION: les sommets correspondants � x et y sont de type PERSONNE
-// PRE CONDITION: strcmp(x,y)!=0
+/**
+ * @brief Détermine si deux personnes se connaissent probablement, c'est-à-dire s'il existe une relation entre eux de manière indirecte via un autre contact en commun.
+ * @param g Le graphe contenant les relations.
+ * @param x Le nom de la première personne.
+ * @param y Le nom de la deuxième personne.
+ * @return true s'il est probable que x et y se connaissent, false sinon.
+ * @pre Les sommets correspondants à x et y sont de type PERSONNE.
+ * @pre strcmp(x,y)!=0
+ */
 bool se_connaissent_proba(Relations g, char *x, char *y)
 {
     bool probablyRelation = false;
@@ -795,8 +853,17 @@ bool se_connaissent_proba(Relations g, char *x, char *y)
     return probablyRelation;
 }
 
-// PRE CONDITION: les sommets correspondants � x et y sont de type PERSONNE
-// PRE CONDITION: strcmp(x,y)!=0
+/**
+ *  @brief Vérifie si deux personnes peuvent se connaître potentiellement, c'est-à-dire
+ *  s'il existe une chaîne de relations entre elles, ou si elles ont des voisins
+ *  en commun qui ne sont pas liés par un lien de parenté.
+ *  @param g le graphe de relations
+ *  @param x le nom de la première personne
+ *  @param y le nom de la deuxième personne
+ *  @return vrai si les deux personnes peuvent se connaître potentiellement, faux sinon
+ *  @pre les sommets correspondants à x et y sont de type PERSONNE
+ *  @pre strcmp(x, y) != 0
+ */
 bool se_connaissent_peutetre(Relations g, char *x, char *y)
 {
     if (_isRelationDirecte(g, x, y))
@@ -823,6 +890,11 @@ bool se_connaissent_peutetre(Relations g, char *x, char *y)
 }
 ////////////////////////////////////////
 // Exercice 5: Affichages
+/**
+ *  @brief Affiche une chaîne de caractères passée en paramètre.
+ *  @param objet Un pointeur void qui pointe vers la chaîne de caractères à afficher.
+ *  @return void.
+ */
 void affiche(void *objet)
 {
     //* Dans notre cas, on affiche une chaine
@@ -831,6 +903,12 @@ void affiche(void *objet)
     return;
 }
 
+/**
+ *  @brief Affiche chaque élément de la liste chaînée.
+ *  @param l La liste chaînée à afficher.
+ *  @param aff Un pointeur vers une fonction qui prend un pointeur void en entrée et ne renvoie rien. Cette fonction sera appelée pour chaque élément de la liste pour afficher son contenu.
+ *  @note La fonction affichera chaque élément de la liste en appelant la fonction aff passée en paramètre.
+ */
 void affichelg(listeg l, void (*aff)(void *))
 {
     while (!estVide(l))
@@ -840,6 +918,10 @@ void affichelg(listeg l, void (*aff)(void *))
     }
 }
 
+/**
+ *  @brief Affiche une entité.
+ *  @param x Un pointeur vers l'entité à afficher.
+ */
 void afficheEntite(void *x)
 {
     Entite entity = (Entite)x;
@@ -864,6 +946,10 @@ void afficheEntite(void *x)
     printf("\n");
 }
 
+/**
+ *  @brief Affiche un arc avec sa transition et son entité associée.
+ *  @param x Un pointeur vers l'arc à afficher.
+ */
 void afficheArc(void *x)
 {
     Arc arc = (Arc)x;
@@ -874,6 +960,15 @@ void afficheArc(void *x)
 
 ////////////////////////////////////////
 // Exercice 6: Parcours
+/**
+ *  @brief Affiche les entités qui ont un certain degré de relation avec une entité donnée.
+ *  @param r Le graphe de relations.
+ *  @param x Le nom de l'entité dont on veut afficher les relations.
+ *  @return void
+ *  Cette fonction parcourt le graphe de relations à partir de l'entité donnée et affiche toutes les entités qui ont un lien
+ *  de relation avec elle à un certain degré. Le degré de relation est déterminé par la distance à l'entité d'origine dans le graphe.
+ *  Les entités sont affichées par degré, de façon à regrouper celles qui ont la même distance à l'entité d'origine.
+ */
 void affiche_degre_relations(Relations r, char *x)
 {
     listeg visitedList = listegnouv();
