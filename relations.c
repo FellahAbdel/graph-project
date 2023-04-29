@@ -844,10 +844,10 @@ void afficheEntite(void *x)
 
 void afficheArc(void *x)
 {
-    Arc a = (Arc)x;
-    printf("-- %s -->", toString(a->t));
-    void *entite = a->x;
-    afficheEntite(entite);
+    Arc arc = (Arc)x;
+    printf("-- %s -->", toString(arc->t));
+    void *entity = arc->x;
+    afficheEntite(entity);
 }
 
 ////////////////////////////////////////
@@ -910,8 +910,7 @@ int main()
     // return 1;
     int i, j;
     Relations r;
-    Relations *ptrR = &r;
-    relationInit(ptrR);
+    relationInit(&r);
 
     // ajouter les entites de l'exemple
     char *tabe[] = {"KARL", "LUDOVIC", "CELINE", "CHLOE", "GILDAS", "CEDRIC", "SEVERINE",
@@ -925,13 +924,8 @@ int main()
     adjEntite(r, tabe[8], ADRESSE);
     adjEntite(r, tabe[9], VILLE);
 
-    // afficheEntites(r);
-
-    printf("-------------------------\n");
-
     // ajouter les relations de l'exemple
     adjRelation(r, tabe[0], tabe[1], FRERE);
-    // return 0;
     adjRelation(r, tabe[0], tabe[2], AMI);
     adjRelation(r, tabe[0], tabe[3], CONNAIT);
     adjRelation(r, tabe[0], tabe[5], COUSIN);
@@ -943,43 +937,7 @@ int main()
     adjRelation(r, tabe[7], tabe[8], DECOUVERT);
     adjRelation(r, tabe[8], tabe[9], SITUE);
 
-    afficheEntites(r);
-    // relationFree(&r);
-    // return 0;
-
-    printf("\n\n\n");
     // afficheEntites(r);
-
-    // listeg listeOfArcs = en_relation(r, tabe[0]);
-
-    // printf("Liste des entites communes.\n");
-    // affichelg(chemin2(r, tabe[6], tabe[1]), afficheEntiteR);
-    // return 0;
-
-    // if (ont_lien_parente(r, tabe[0], tabe[2]))
-    // {
-    //     printf("oui\n");
-    // }
-    // else
-    // {
-    //     printf("non\n");
-    // }
-
-    // Test de la fonction se connaissent.
-    // printf("%s se connait avec %s : %s\n", tabe[0], tabe[1], se_connaissent(r, tabe[0], tabe[1]) ? "true" : "false");
-    // printf("%s se connait avec %s : %s\n", tabe[0], tabe[2], se_connaissent(r, tabe[0], tabe[2]) ? "true" : "false");
-    // printf("%s se connait avec %s : %s\n", tabe[2], tabe[3], se_connaissent(r, tabe[2], tabe[3]) ? "true" : "false");
-    // printf("%s se connait avec %s : %s\n", tabe[1], tabe[5], se_connaissent(r, tabe[1], tabe[5]) ? "true" : "false");
-    // printf("%s se connait avec %s : %s\n", tabe[0], tabe[5], se_connaissent(r, tabe[0], tabe[5]) ? "true" : "false");
-    // char *chloe = tabe[3];
-    // char *gildas = tabe[4];
-
-    // printf("%s se connait avec %s : %s\n", chloe, gildas, se_connaissent(r, chloe, gildas) ? "true" : "false");
-    // return 0;
-    // // Arc arc = (Arc)listeOfArcs->val;
-    // printf("%s", ((Entite)arc->x)->nom);
-    // relationFree(&r);
-    // return 0;
 
     // explorer les relations
     printf("%s est en relation avec:\n", tabe[0]);
