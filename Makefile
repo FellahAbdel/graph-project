@@ -8,10 +8,7 @@ EXEC = prog
 all : $(EXEC)
 
 prog: relations.c
-	$(CC) relations.c -o test
-	
-main:
-	$(CC) relations.c -o exec 
+	$(CC) relations.c -o prog
 
 clean:
 	rm $(EXEC)
